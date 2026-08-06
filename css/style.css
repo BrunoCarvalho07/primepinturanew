@@ -37,6 +37,13 @@
   --text-muted: #a7a49f;
   --text-dim: #726f6b;
 
+  /* Cores fixas usadas SOMENTE sobre mídia (vídeo/foto) — Hero, seções de
+     vídeo, legendas de galeria. Não mudam com o tema, porque o fundo ali
+     é sempre escuro (vídeo/scrim), independente do tema claro/escuro. */
+  --media-text: #f5f1ea;
+  --media-text-muted: #a7a49f;
+  --header-bg-scrolled: rgba(14, 14, 16, 0.86);
+
   --orange: #e8641c;
   --orange-light: #ff8a42;
   --yellow: #f2b705;
@@ -61,6 +68,29 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ---------- TEMA CLARO ---------- */
+/* Afeta apenas as seções de conteúdo "normais" (fundo da página, cards,
+   texto corrido, rodapé). Hero e seções de vídeo continuam escuras de
+   propósito — é onde o vídeo/foto forma o fundo, então texto claro sobre
+   fundo escuro sempre funciona ali, em qualquer tema. */
+[data-theme="light"] {
+  --bg: #faf7f2;
+  --bg-alt: #f2ede4;
+  --surface: #ffffff;
+  --surface-2: #f2ede4;
+  --line: rgba(23, 19, 15, 0.10);
+  --line-strong: rgba(23, 19, 15, 0.16);
+
+  --text: #17130f;
+  --text-muted: #635e57;
+  --text-dim: #938d84;
+
+  /* Faixa do menu, quando sólida (rolada), em branco quase opaco no tema
+     claro — no topo da página ela continua transparente em ambos os temas,
+     mostrando o vídeo do Hero por baixo. */
+  --header-bg-scrolled: rgba(250, 247, 242, 0.86);
+}
+
 html { scroll-behavior: smooth; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -81,6 +111,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.4s var(--ease), color 0.4s var(--ease);
 }
 
 img, video { max-width: 100%; display: block; }
@@ -176,6 +207,27 @@ h1, h2, h3, .font-display {
 }
 .btn-outline:hover { border-color: var(--orange-light); color: var(--orange-light); transform: translateY(-2px); }
 
+.btn-sm { padding: 0.55em 1.3em; font-size: 0.72rem; }
+
+/* Botão de alternar tema claro/escuro */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.theme-toggle:hover { background: var(--line); }
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle .icon-moon { display: none; }
+[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+/* No header, o botão fica sobre a área "chrome" escura fixa — força cor clara */
+.site-header .theme-toggle { color: var(--media-text); }
+.site-header .theme-toggle:hover { background: rgba(245,241,234,0.12); }
+
 .visually-hidden {
   position: absolute;
   width: 1px; height: 1px;
@@ -195,11 +247,18 @@ h1, h2, h3, .font-display {
   border-bottom: 1px solid transparent;
 }
 .site-header.is-scrolled {
-  background: rgba(14, 14, 16, 0.86);
+  background: var(--header-bg-scrolled);
   backdrop-filter: blur(10px);
   border-bottom-color: var(--line);
   padding-block: 0.7rem;
 }
+/* Quando a faixa fica sólida, o texto passa a seguir o tema da página
+   (claro ou escuro) em vez da cor fixa usada sobre o vídeo do Hero. */
+.site-header.is-scrolled .main-nav a { color: var(--text-muted); }
+.site-header.is-scrolled .main-nav a:hover { color: var(--text); }
+.site-header.is-scrolled .nav-toggle span { background: var(--text); }
+.site-header.is-scrolled .theme-toggle { color: var(--text); }
+.site-header.is-scrolled .theme-toggle:hover { background: var(--line); }
 
 .site-header .container {
   display: flex;
@@ -213,11 +272,11 @@ h1, h2, h3, .font-display {
   align-items: center;
 }
 .logo-img {
-  height: 38px;
+  height: 50px;
   width: auto;
   display: block;
 }
-.footer-brand .logo-img { height: 34px; }
+.footer-brand .logo-img { height: 46px; }
 
 .main-nav { display: flex; align-items: center; gap: var(--space-md); }
 .main-nav ul { display: flex; gap: var(--space-md); }
@@ -226,11 +285,11 @@ h1, h2, h3, .font-display {
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--media-text-muted);
   transition: color 0.25s ease;
   position: relative;
 }
-.main-nav a:hover { color: var(--text); }
+.main-nav a:hover { color: var(--media-text); }
 
 .nav-toggle {
   display: none;
@@ -240,7 +299,7 @@ h1, h2, h3, .font-display {
 }
 .nav-toggle span {
   width: 24px; height: 2px;
-  background: var(--text);
+  background: var(--media-text);
   transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
 }
 
@@ -323,16 +382,19 @@ h1, h2, h3, .font-display {
 }
 
 .hero-content {
-  position: relative;
+  position: absolute;
   z-index: 2;
+  left: 0; right: 0; bottom: 0;
   width: 100%;
   padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(2.5rem, 8vh, 5rem);
+  will-change: opacity, transform;
 }
 
 .hero-title {
-  font-size: clamp(2.6rem, 8.4vw, 6.4rem);
+  font-size: clamp(2.9rem, 9.4vw, 7.2rem);
   max-width: 14ch;
-  color: var(--text);
+  color: var(--media-text);
+  text-shadow: 0 4px 24px rgba(0,0,0,0.45);
 }
 .hero-title em {
   font-style: normal;
@@ -345,7 +407,7 @@ h1, h2, h3, .font-display {
 .hero-sub {
   margin-top: var(--space-sm);
   max-width: 48ch;
-  color: var(--text-muted);
+  color: var(--media-text-muted);
   font-size: clamp(1rem, 1.6vw, 1.2rem);
 }
 
@@ -368,13 +430,59 @@ h1, h2, h3, .font-display {
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--media-text-muted);
   writing-mode: vertical-rl;
+  transition: opacity 0.3s ease;
 }
 .hero-scrollcue::after {
   content: "";
   width: 1px; height: 46px;
-  background: linear-gradient(180deg, var(--text-muted), transparent);
+  background: linear-gradient(180deg, var(--media-text-muted), transparent);
+}
+
+/* Textos que surgem durante o scroll dentro do Hero (scrollytelling).
+   Ocupam exatamente o mesmo espaço do hero-content (canto inferior
+   esquerdo) — como o título já saiu de cena a essa altura da rolagem
+   (ver data-range no HTML), um substitui o outro sem se sobrepor.
+   A posição vertical (translateY) é calculada quadro a quadro em
+   script.js, proporcional ao progresso do scroll dentro do intervalo de
+   cada item — é o que dá a sensação de o texto "subir" com a rolagem,
+   como se estivesse descendo a página junto com o usuário. */
+.hero-story {
+  position: absolute;
+  z-index: 2;
+  left: 0; right: 0; bottom: 0;
+  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(2.5rem, 8vh, 5rem);
+}
+.hero-story__item {
+  position: absolute;
+  left: clamp(1.25rem, 5vw, 3rem);
+  right: clamp(1.25rem, 5vw, 3rem);
+  bottom: clamp(2.5rem, 8vh, 5rem);
+  max-width: 40ch;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.hero-story__num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--orange-light);
+  margin-bottom: 0.6rem;
+}
+.hero-story__item p {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--media-text);
+  text-shadow: 0 4px 24px rgba(0,0,0,0.45);
+}
+
+@media (max-width: 860px) {
+  .hero-story__item p { font-size: clamp(1.3rem, 5vw, 1.8rem); }
 }
 
 /* ---------- 7. QUEM SOMOS ---------- */
@@ -409,7 +517,7 @@ h1, h2, h3, .font-display {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text);
+  color: var(--media-text);
   background: rgba(14,14,16,0.55);
   padding: 0.5em 0.9em;
   border-radius: 999px;
@@ -507,6 +615,7 @@ h1, h2, h3, .font-display {
   z-index: 2;
   max-width: 640px;
 }
+.video-feature-content .section-title { color: var(--media-text); }
 .video-feature-content p.section-lead { color: rgba(245,241,234,0.82); }
 
 .color-chips {
@@ -534,7 +643,31 @@ h1, h2, h3, .font-display {
   overflow: hidden;
   aspect-ratio: 1 / 1;
   isolation: isolate;
+  width: 100%;
+  padding: 0;
+  text-align: left;
 }
+button.gallery-item { cursor: zoom-in; }
+.gallery-item.is-placeholder { cursor: default; }
+
+/* Ícone de lupa que aparece no hover/foco, indicando que a foto amplia */
+.gallery-zoom {
+  position: absolute;
+  top: var(--space-xs); right: var(--space-xs);
+  z-index: 3;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(14,14,16,0.55);
+  backdrop-filter: blur(4px);
+  color: var(--media-text);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.gallery-zoom svg { width: 16px; height: 16px; }
+.gallery-item:hover .gallery-zoom,
+.gallery-item:focus-visible .gallery-zoom { opacity: 1; transform: scale(1); }
 /* Placeholder de foto: bloco em gradiente na paleta da marca até as fotos
    reais dos projetos serem enviadas — ver comentário no HTML. */
 .gallery-item .ph-fill {
@@ -564,6 +697,7 @@ h1, h2, h3, .font-display {
   font-family: var(--font-display);
   font-size: 1.05rem;
   text-transform: uppercase;
+  color: var(--media-text);
 }
 .gallery-item.span-2 { grid-column: span 2; }
 
@@ -786,6 +920,63 @@ h1, h2, h3, .font-display {
   [data-reveal], [data-reveal="stagger"] > * { opacity: 1; transform: none; }
 }
 
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(8, 8, 9, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.lightbox[hidden] { display: none; }
+.lightbox.is-open { opacity: 1; }
+
+.lightbox figure {
+  max-width: min(1100px, 92vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transform: scale(0.96);
+  transition: transform 0.3s var(--ease);
+}
+.lightbox.is-open figure { transform: scale(1); }
+
+.lightbox img {
+  max-height: 78vh;
+  width: auto;
+  margin-inline: auto;
+  border-radius: var(--radius);
+  object-fit: contain;
+}
+.lightbox figcaption {
+  text-align: center;
+  color: var(--media-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: clamp(0.8rem, 3vw, 1.6rem);
+  right: clamp(0.8rem, 3vw, 1.6rem);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  color: var(--media-text);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.16); transform: rotate(90deg); }
+.lightbox-close svg { width: 20px; height: 20px; }
+
 /* ---------- MENU MOBILE ---------- */
 .mobile-menu {
   position: fixed;
@@ -807,6 +998,16 @@ h1, h2, h3, .font-display {
   text-transform: uppercase;
 }
 .mobile-menu .btn-primary { margin-top: var(--space-md); width: fit-content; }
+.mobile-menu-footer {
+  margin-top: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.mobile-menu-footer .theme-toggle {
+  width: 44px; height: 44px;
+  border: 1px solid var(--line-strong);
+}
 
 /* Trava o scroll do body quando o menu mobile está aberto */
 body.menu-open { overflow: hidden; }

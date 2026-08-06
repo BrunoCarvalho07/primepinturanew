@@ -3,18 +3,22 @@
  * Vanilla JS, sem dependências externas (mantém o site leve e rápido em 3G/4G).
  *
  * Módulos:
+ *  0. Tema: alterna claro/escuro e lembra a preferência do visitante
  *  1. Header: muda de transparente para sólido ao rolar
  *  2. Menu mobile: abre/fecha o overlay de navegação
  *  3. Hero scroll-scrubbing: desenha o frame correto do vídeo de tinta
- *     num <canvas> conforme a posição do scroll dentro da seção Hero
+ *     num <canvas> conforme a posição do scroll dentro da seção Hero,
+ *     e ativa os textos narrativos (hero-story) por faixa de progresso
  *  4. Indicador de "rolo de tinta": preenche a trilha lateral conforme
  *     o progresso de leitura da página inteira
- *  5. Vídeo da seção "Cores sob medida": efeito parallax sutil
+ *  5. Vídeos em loop (seções "Cores sob medida" / "Confiança"): parallax sutil
  *  6. Carrossel de avaliações: arrastável com mouse/touch
- *  7. Reveal on scroll: fade/slide leve para elementos ao entrarem na tela
+ *  7. Lightbox: amplia a foto da galeria ao clicar
+ *  8. Reveal on scroll: fade/slide leve para elementos ao entrarem na tela
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   initHeader();
   initMobileMenu();
   initHeroScrubbing();
@@ -22,8 +26,32 @@ document.addEventListener("DOMContentLoaded", () => {
   initVideoParallax();
   initReviewsDrag();
   initRevealOnScroll();
+  initLightbox();
   setYear();
 });
+
+/* ---------- 0. TEMA CLARO/ESCURO ---------- */
+/**
+ * Preferência salva em localStorage (site real, fora do sandbox de
+ * artifacts — localStorage funciona normalmente aqui). Se não houver nada
+ * salvo, respeita o tema do sistema operacional do visitante.
+ */
+function initTheme() {
+  const root = document.documentElement;
+  const stored = localStorage.getItem("pp-theme");
+  const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+  const initial = stored || (prefersLight ? "light" : "dark");
+  root.setAttribute("data-theme", initial);
+
+  document.querySelectorAll(".theme-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const current = root.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("pp-theme", next);
+    });
+  });
+}
 
 /* ---------- 1. HEADER ---------- */
 function initHeader() {
@@ -130,6 +158,7 @@ function initHeroScrubbing() {
       const progress = total > 0 ? scrolled / total : 0;
       const frameIndex = Math.min(FRAME_COUNT - 1, Math.floor(progress * FRAME_COUNT));
       drawFrame(frameIndex);
+      updateHeroStory(progress);
       ticking = false;
     });
   }
@@ -141,7 +170,53 @@ function initHeroScrubbing() {
 
   resizeCanvas();
   preload();
+  updateHeroStory(0); // estado inicial: título visível, textos do scroll ocultos
   window.addEventListener("scroll", onScroll, { passive: true });
+}
+
+/**
+ * Anima o título inicial e os textos do hero-story em função direta do
+ * progresso do scroll (0 a 1) — sem depender de transições CSS soltas,
+ * pra o movimento ficar exatamente grudado na rolagem (sensação de
+ * "puxar" o texto para cima conforme desce a página). Cada elemento com
+ * [data-range="inicio,fim"] fica: invisível e 40px abaixo antes do
+ * intervalo → sobe e aparece → fica parado e legível durante o intervalo
+ * → continua subindo e desaparece depois do intervalo.
+ */
+function updateHeroStory(progress) {
+  const items = document.querySelectorAll(".hero-content[data-range], .hero-story__item[data-range]");
+  items.forEach((item) => {
+    const [start, end] = item.dataset.range.split(",").map(Number);
+    const span = Math.max(end - start, 0.001);
+    const fade = Math.min(span * 0.35, 0.045);
+
+    let opacity = 0;
+    let travel = 40; // px: desce/sobe fora do intervalo visível
+
+    if (progress < start - fade || progress > end + fade) {
+      opacity = 0;
+      travel = progress <= start ? 40 : -40;
+    } else if (progress < start) {
+      const k = (progress - (start - fade)) / fade;
+      opacity = k;
+      travel = (1 - k) * 40;
+    } else if (progress > end) {
+      const k = (progress - end) / fade;
+      opacity = 1 - k;
+      travel = -k * 40;
+    } else {
+      opacity = 1;
+      travel = 0;
+    }
+
+    item.style.opacity = opacity.toFixed(3);
+    item.style.transform = `translateY(${travel.toFixed(1)}px)`;
+    item.style.pointerEvents = opacity > 0.6 ? "auto" : "none";
+  });
+
+  // A "role para começar" some assim que a rolagem começa de verdade
+  const cue = document.querySelector(".hero-scrollcue");
+  if (cue) cue.style.opacity = progress > 0.03 ? "0" : "1";
 }
 
 /* ---------- 4. INDICADOR "ROLO DE TINTA" ---------- */
@@ -169,24 +244,31 @@ function initScrollRoller() {
   window.addEventListener("resize", update);
 }
 
-/* ---------- 5. PARALLAX DO VÍDEO "CORES SOB MEDIDA" ---------- */
+/* ---------- 5. PARALLAX DOS VÍDEOS EM LOOP ("Cores sob medida" e "Confiança") ---------- */
+/**
+ * Suporta múltiplas seções .video-feature na página (amarela e azul) —
+ * cada uma tem seu próprio deslocamento calculado de forma independente.
+ */
 function initVideoParallax() {
-  const section = document.querySelector(".video-feature");
-  const video = section?.querySelector("video");
-  if (!section || !video) return;
+  const sections = document.querySelectorAll(".video-feature");
+  if (!sections.length) return;
 
   let ticking = false;
   function update() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      const rect = section.getBoundingClientRect();
-      const vh = window.innerHeight;
-      if (rect.top < vh && rect.bottom > 0) {
-        const progress = 1 - (rect.top + rect.height / 2) / (vh + rect.height / 2);
-        const offset = (progress - 0.5) * 60; // desloca até 30px pra cada lado
-        video.style.transform = `translateY(${offset}px) scale(1.15)`;
-      }
+      sections.forEach((section) => {
+        const video = section.querySelector("video");
+        if (!video) return;
+        const rect = section.getBoundingClientRect();
+        const vh = window.innerHeight;
+        if (rect.top < vh && rect.bottom > 0) {
+          const progress = 1 - (rect.top + rect.height / 2) / (vh + rect.height / 2);
+          const offset = (progress - 0.5) * 60; // desloca até 30px pra cada lado
+          video.style.transform = `translateY(${offset}px) scale(1.15)`;
+        }
+      });
       ticking = false;
     });
   }
@@ -195,7 +277,9 @@ function initVideoParallax() {
 
   // Autoplay costuma exigir vídeo mudo + playsinline; garante que toca
   // mesmo se o navegador pausar por economia de dados.
-  video.play?.().catch(() => {});
+  sections.forEach((section) => {
+    section.querySelector("video")?.play?.().catch(() => {});
+  });
 }
 
 /* ---------- 6. CARROSSEL DE AVALIAÇÕES (arrastável) ---------- */
@@ -231,7 +315,55 @@ function initReviewsDrag() {
   track.addEventListener("touchend", end);
 }
 
-/* ---------- 7. REVEAL ON SCROLL ---------- */
+/* ---------- 7. LIGHTBOX (ampliar foto da galeria) ---------- */
+function initLightbox() {
+  const lightbox = document.getElementById("lightbox");
+  const imgEl = document.getElementById("lightbox-img");
+  const captionEl = document.getElementById("lightbox-caption");
+  const closeBtn = lightbox?.querySelector(".lightbox-close");
+  const triggers = document.querySelectorAll("[data-lightbox]");
+  if (!lightbox || !imgEl || !triggers.length) return;
+
+  let lastFocused = null;
+
+  function open(src, caption) {
+    lastFocused = document.activeElement;
+    imgEl.src = src;
+    imgEl.alt = caption || "";
+    captionEl.textContent = caption || "";
+    lightbox.hidden = false;
+    // pequeno delay pra permitir a transição de opacidade/escala rodar
+    requestAnimationFrame(() => lightbox.classList.add("is-open"));
+    document.body.classList.add("menu-open"); // reaproveita o "trava scroll"
+    closeBtn?.focus();
+  }
+
+  function close() {
+    lightbox.classList.remove("is-open");
+    document.body.classList.remove("menu-open");
+    setTimeout(() => {
+      lightbox.hidden = true;
+      imgEl.src = "";
+    }, 300);
+    lastFocused?.focus();
+  }
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      open(trigger.dataset.lightbox, trigger.dataset.caption);
+    });
+  });
+
+  closeBtn?.addEventListener("click", close);
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) close(); // clique fora da imagem fecha
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !lightbox.hidden) close();
+  });
+}
+
+/* ---------- 8. REVEAL ON SCROLL ---------- */
 function initRevealOnScroll() {
   const targets = document.querySelectorAll("[data-reveal]");
   if (!targets.length) return;

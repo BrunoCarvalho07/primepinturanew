@@ -96,7 +96,11 @@
           <li><a href="#avaliacoes">Avaliações</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
-        <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary" target="_blank" rel="noopener">Pedir orçamento</a>
+        <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
+        </button>
+        <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary btn-sm" target="_blank" rel="noopener">Orçamento</a>
       </nav>
 
       <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
@@ -115,7 +119,13 @@
         <li><a href="#avaliacoes">Avaliações</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
-      <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary" target="_blank" rel="noopener">Pedir orçamento</a>
+      <div class="mobile-menu-footer">
+        <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary" target="_blank" rel="noopener">Pedir orçamento</a>
+        <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
+        </button>
+      </div>
     </nav>
   </div>
 
@@ -130,12 +140,31 @@
         <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-scrim"></div>
 
-        <div class="hero-content">
+        <div class="hero-content" data-range="0,0.05">
           <h1 class="hero-title">Cada parede tem uma <em>história</em> pra contar</h1>
           <p class="hero-sub">Pintura residencial e comercial em São Paulo, com acabamento fino, texturas sob medida e um time que trata sua casa como se fosse a nossa.</p>
           <div class="hero-actions">
             <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary" target="_blank" rel="noopener">Peça seu orçamento</a>
             <a href="#servicos" class="btn btn-outline">Ver serviços</a>
+          </div>
+        </div>
+
+        <!-- Textos que surgem conforme o usuário rola dentro da cena do Hero,
+             sincronizados com o progresso do vídeo (0 a 1) calculado em
+             script.js. Cada bloco tem seu próprio intervalo de progresso
+             (data-range="início,fim") em que fica visível. -->
+        <div class="hero-story" aria-hidden="true">
+          <div class="hero-story__item" data-range="0.08,0.32">
+            <span class="hero-story__num">01</span>
+            <p>Preparo da superfície: lixa, massa e selador antes de qualquer pincelada.</p>
+          </div>
+          <div class="hero-story__item" data-range="0.36,0.60">
+            <span class="hero-story__num">02</span>
+            <p>Tinta de qualidade, aplicada nas demãos certas — sem economizar no que garante durabilidade.</p>
+          </div>
+          <div class="hero-story__item" data-range="0.64,0.88">
+            <span class="hero-story__num">03</span>
+            <p>Acabamento revisado antes da entrega. Se não ficou perfeito, a gente refaz.</p>
           </div>
         </div>
 
@@ -247,62 +276,87 @@
     </section>
 
     <!-- ===================== GALERIA DE FOTOS ===================== -->
-    <!-- PLACEHOLDER: os cartões abaixo usam blocos em gradiente na paleta da
-         marca no lugar de fotos reais dos projetos (nenhuma foi enviada
-         ainda). Assim que você mandar fotos de obras, basta trocar a div
-         com classe "ph-fill" por uma <img> — a legenda (gallery-caption)
-         já está pronta para reaproveitar. -->
+    <!-- PLACEHOLDER: 1 cartão ainda usa bloco em gradiente (sem foto real de
+         projeto comercial). Troque o "ph-fill" por uma <img> quando tiver.
+         Cada foto tem um botão de lupa que abre o lightbox (ver script.js). -->
     <section class="section" id="galeria">
       <div class="container">
         <p class="eyebrow" data-reveal>Sessão de fotos</p>
         <h2 class="section-title" data-reveal>Projetos recentes</h2>
-        <p class="section-lead" data-reveal>Uma amostra do nosso trabalho. Envie as fotos das suas obras para substituirmos estes espaços reservados por fotos reais.</p>
+        <p class="section-lead" data-reveal>Uma amostra do nosso trabalho. Clique em qualquer foto para ampliar.</p>
 
         <div class="gallery-grid" data-reveal="stagger">
-          <div class="gallery-item">
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto2.jpg" data-caption="Residencial — Sala · parede decorativa">
             <img src="assets/gallery/foto2.jpg" alt="Sala de estar com parede decorativa marmorizada pintada pela Prime Pintura" loading="lazy" width="900" height="900" />
-            <div class="gallery-caption">
-              <p class="eyebrow">Residencial</p>
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
               <strong>Sala · parede decorativa</strong>
-            </div>
-          </div>
-          <div class="gallery-item">
+            </span>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto1.jpg" data-caption="Residencial — Quarto · acabamento fosco">
             <img src="assets/gallery/foto1.jpg" alt="Quarto recém pintado em tom neutro, acabamento fosco" loading="lazy" width="900" height="900" />
-            <div class="gallery-caption">
-              <p class="eyebrow">Residencial</p>
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
               <strong>Quarto · acabamento fosco</strong>
-            </div>
-          </div>
-          <div class="gallery-item">
+            </span>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto3.jpg" data-caption="Residencial — Sala · integração com varanda">
             <img src="assets/gallery/foto3.jpg" alt="Sala de estar integrada com varanda, piso de madeira e parede decorativa" loading="lazy" width="900" height="900" />
-            <div class="gallery-caption">
-              <p class="eyebrow">Residencial</p>
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
               <strong>Sala · integração com varanda</strong>
-            </div>
-          </div>
-          <div class="gallery-item">
+            </span>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto5.jpg" data-caption="Residencial — Sanca · iluminação embutida">
             <img src="assets/gallery/foto5.jpg" alt="Sanca de gesso com iluminação embutida em apartamento" loading="lazy" width="900" height="900" />
-            <div class="gallery-caption">
-              <p class="eyebrow">Residencial</p>
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
               <strong>Sanca · iluminação embutida</strong>
-            </div>
-          </div>
-          <div class="gallery-item span-2">
+            </span>
+          </button>
+          <button type="button" class="gallery-item span-2" data-lightbox="assets/gallery/foto4.jpg" data-caption="Residencial — Fachada · sobrado completo">
             <img src="assets/gallery/foto4.jpg" alt="Fachada de sobrado em fase final de acabamento" loading="lazy" width="900" height="900" />
-            <div class="gallery-caption">
-              <p class="eyebrow">Residencial</p>
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
               <strong>Fachada · sobrado completo</strong>
-            </div>
-          </div>
-          <!-- PLACEHOLDER: ainda sem foto real de projeto comercial — troque o
-               "ph-fill" abaixo por uma <img> assim que tiver uma. -->
-          <div class="gallery-item">
+            </span>
+          </button>
+          <!-- PLACEHOLDER: ainda sem foto real de projeto comercial — troque
+               por um <button class="gallery-item" data-lightbox="..."> igual
+               aos de cima assim que tiver uma foto. -->
+          <div class="gallery-item is-placeholder">
             <div class="ph-fill" style="--gallery-gradient: linear-gradient(135deg, #3a3a3f, #1a1a1d);"></div>
-            <div class="gallery-caption">
-              <p class="eyebrow">Comercial</p>
+            <span class="gallery-caption">
+              <span class="eyebrow">Comercial</span>
               <strong>Em breve</strong>
-            </div>
+            </span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SEÇÃO DE VÍDEO — "Confiança em cada camada" ===================== -->
+    <!-- Segundo vídeo em loop (tinta azul), mesma técnica leve de parallax
+         usada na seção amarela — script.js já trata múltiplas .video-feature. -->
+    <section class="video-feature video-feature--azul">
+      <video autoplay muted loop playsinline preload="metadata"
+             poster="assets/video/azul-poster.jpg"
+             aria-hidden="true">
+        <source src="assets/video/azul-loop.webm" type="video/webm" />
+        <source src="assets/video/azul-loop.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-scrim"></div>
+
+      <div class="container">
+        <div class="video-feature-content" data-reveal>
+          <p class="eyebrow">Confiança em cada camada</p>
+          <h2 class="section-title">Do orçamento à última demão, sem surpresas</h2>
+          <p class="section-lead">Prazo combinado, material informado com antecedência e proteção de móveis e piso em todo o serviço. Você acompanha o andamento do início ao fim.</p>
         </div>
       </div>
     </section>
@@ -423,6 +477,17 @@
     <a class="fab-instagram" href="https://www.instagram.com/primepintura12" target="_blank" rel="noopener" aria-label="Ver Instagram">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
     </a>
+  </div>
+
+  <!-- ===================== LIGHTBOX (visualização ampliada da foto) ===================== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualização de foto ampliada" hidden>
+    <button type="button" class="lightbox-close" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5 5 19"/></svg>
+    </button>
+    <figure>
+      <img id="lightbox-img" src="" alt="" />
+      <figcaption id="lightbox-caption"></figcaption>
+    </figure>
   </div>
 
   <script src="js/script.js"></script>
