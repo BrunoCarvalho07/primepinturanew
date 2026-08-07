@@ -198,8 +198,30 @@ h1, h2, h3, .font-display {
   background: var(--paint-gradient);
   color: #17130c;
   font-weight: 700;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -8px rgba(232, 100, 28, 0.55); }
+
+/* Efeito elegante: um brilho fino atravessa o botão da esquerda pra
+   direita ao passar o mouse — sutil, sem ser chamativo demais. */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,0.65), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.65s var(--ease);
+  pointer-events: none;
+}
+.btn-primary:hover::after { left: 130%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after { display: none; }
+}
 
 .btn-outline {
   border: 1.5px solid var(--line-strong);
@@ -207,7 +229,10 @@ h1, h2, h3, .font-display {
 }
 .btn-outline:hover { border-color: var(--orange-light); color: var(--orange-light); transform: translateY(-2px); }
 
-.btn-sm { padding: 0.55em 1.3em; font-size: 0.72rem; }
+.btn-sm { padding: 0.42em 1.05em; font-size: 0.66rem; letter-spacing: 0.04em; }
+
+.btn-icon { gap: 0.5em; }
+.btn-icon svg { width: 14px; height: 14px; flex-shrink: 0; }
 
 /* Botão de alternar tema claro/escuro */
 .theme-toggle {
@@ -294,11 +319,13 @@ h1, h2, h3, .font-display {
 .nav-toggle {
   display: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   z-index: 110;
+  padding: 6px;
+  margin: -6px;
 }
 .nav-toggle span {
-  width: 24px; height: 2px;
+  width: 18px; height: 1.5px;
   background: var(--media-text);
   transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
 }
@@ -362,6 +389,7 @@ h1, h2, h3, .font-display {
   overflow: hidden;
   display: flex;
   align-items: flex-end;
+  perspective: 1400px; /* dá profundidade real ao leve rotateX do canvas abaixo */
 }
 
 .hero-canvas {
@@ -370,7 +398,13 @@ h1, h2, h3, .font-display {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.78) saturate(1.05);
+  filter: brightness(0.78) saturate(1.08) contrast(1.04);
+  transform-origin: center bottom;
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* transform (leve escala + rotateX) é atualizado quadro a quadro em
+     script.js, proporcional ao progresso do scroll — dá a sensação de
+     profundidade 3D combinando com o próprio vídeo (que já é um render 3D). */
 }
 
 .hero-scrim {
@@ -391,7 +425,7 @@ h1, h2, h3, .font-display {
 }
 
 .hero-title {
-  font-size: clamp(2.9rem, 9.4vw, 7.2rem);
+  font-size: clamp(3.1rem, 10vw, 7.8rem);
   max-width: 14ch;
   color: var(--media-text);
   text-shadow: 0 4px 24px rgba(0,0,0,0.45);
@@ -408,7 +442,7 @@ h1, h2, h3, .font-display {
   margin-top: var(--space-sm);
   max-width: 48ch;
   color: var(--media-text-muted);
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
 }
 
 .hero-actions {
@@ -474,7 +508,7 @@ h1, h2, h3, .font-display {
 }
 .hero-story__item p {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+  font-size: clamp(1.7rem, 4vw, 2.7rem);
   text-transform: uppercase;
   line-height: 1.15;
   color: var(--media-text);

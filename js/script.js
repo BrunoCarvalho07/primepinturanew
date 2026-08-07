@@ -6,7 +6,7 @@
  *  0. Tema: alterna claro/escuro e lembra a preferência do visitante
  *  1. Header: muda de transparente para sólido ao rolar
  *  2. Menu mobile: abre/fecha o overlay de navegação
- *  3. Hero scroll-scrubbing: desenha o frame correto do vídeo de tinta
+ *  3. Hero scroll-scrubbing: desenha o frame correto do vídeo de tinta laranja
  *     num <canvas> conforme a posição do scroll dentro da seção Hero,
  *     e ativa os textos narrativos (hero-story) por faixa de progresso
  *  4. Indicador de "rolo de tinta": preenche a trilha lateral conforme
@@ -159,6 +159,7 @@ function initHeroScrubbing() {
       const frameIndex = Math.min(FRAME_COUNT - 1, Math.floor(progress * FRAME_COUNT));
       drawFrame(frameIndex);
       updateHeroStory(progress);
+      update3DTilt(canvas, progress);
       ticking = false;
     });
   }
@@ -171,7 +172,22 @@ function initHeroScrubbing() {
   resizeCanvas();
   preload();
   updateHeroStory(0); // estado inicial: título visível, textos do scroll ocultos
+  update3DTilt(canvas, 0);
   window.addEventListener("scroll", onScroll, { passive: true });
+}
+
+/**
+ * Efeito 3D do Hero: uma leve rotação em X + escala aplicada ao canvas,
+ * decrescendo conforme o progresso do scroll — começa com uma inclinação
+ * sutil de "câmera olhando de cima" e assenta reto no fim da cena. Como o
+ * .hero-pin tem perspective definida no CSS, esse rotateX gera profundidade
+ * real (não é só um efeito 2D), combinando com o vídeo original que já é
+ * um render 3D de latas de tinta.
+ */
+function update3DTilt(canvas, progress) {
+  const tilt = 4 * (1 - progress); // graus: começa em 4°, chega a 0°
+  const scale = 1.06 - progress * 0.06; // começa levemente ampliado, assenta em 1.0
+  canvas.style.transform = `rotateX(${tilt.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 }
 
 /**
