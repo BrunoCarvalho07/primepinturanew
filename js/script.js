@@ -11,7 +11,9 @@
  *     e ativa os textos narrativos (hero-story) por faixa de progresso
  *  4. Indicador de "rolo de tinta": preenche a trilha lateral conforme
  *     o progresso de leitura da página inteira
- *  5. Vídeos em loop (seções "Cores sob medida" / "Confiança"): parallax sutil
+ *  5. Vídeos em loop (seções de vídeo laranja/amarela/azul): parallax sutil
+ *     no vídeo + entrada/saída suave do texto conforme a seção passa pelo
+ *     centro da tela (mesmo espírito visual da seção 1)
  *  6. Carrossel de avaliações: arrastável com mouse/touch
  *  7. Lightbox: amplia a foto da galeria ao clicar
  *  8. Reveal on scroll: fade/slide leve para elementos ao entrarem na tela
@@ -100,7 +102,7 @@ function initHeroScrubbing() {
   if (!wrapper || !canvas) return;
 
   const ctx = canvas.getContext("2d");
-  const FRAME_COUNT = 48; // quantidade de frames extraídos do vídeo
+  const FRAME_COUNT = 80; // quantidade de frames extraídos do vídeo (mais frames = scrubbing mais suave)
   const framePath = (i) =>
     `assets/frames-hero/frame_${String(i + 1).padStart(3, "0")}.jpg`;
 
@@ -276,26 +278,57 @@ function initVideoParallax() {
     requestAnimationFrame(() => {
       sections.forEach((section) => {
         const video = section.querySelector("video");
-        if (!video) return;
         const rect = section.getBoundingClientRect();
         const vh = window.innerHeight;
-        if (rect.top < vh && rect.bottom > 0) {
+
+        if (video && rect.top < vh && rect.bottom > 0) {
           const progress = 1 - (rect.top + rect.height / 2) / (vh + rect.height / 2);
           const offset = (progress - 0.5) * 60; // desloca até 30px pra cada lado
           video.style.transform = `translateY(${offset}px) scale(1.15)`;
         }
+
+        updateScrollReveal(section);
       });
       ticking = false;
     });
   }
   update();
   window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
 
   // Autoplay costuma exigir vídeo mudo + playsinline; garante que toca
   // mesmo se o navegador pausar por economia de dados.
   sections.forEach((section) => {
     section.querySelector("video")?.play?.().catch(() => {});
   });
+}
+
+/**
+ * Anima o conteúdo (título + texto) de cada seção de vídeo em função
+ * contínua da posição de rolagem — mesmo espírito visual da seção 1: a
+ * informação "aparece por cima do vídeo" conforme a seção entra no centro
+ * da tela, e desaparece suavemente conforme ela sai, subindo um pouco
+ * (translateY) enquanto some. Diferente do hero, aqui não há pin de 400vh:
+ * o efeito acompanha o card normal da seção enquanto ele passa pela tela,
+ * mantendo a página em um tamanho razoável para navegação e SEO.
+ */
+function updateScrollReveal(section) {
+  const content = section.querySelector("[data-scroll-reveal]");
+  if (!content) return;
+
+  const rect = section.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const sectionCenter = rect.top + rect.height / 2;
+  const viewportCenter = vh / 2;
+  const maxDist = vh / 2 + rect.height / 2;
+  const dist = Math.abs(sectionCenter - viewportCenter);
+
+  // t = 1 quando a seção está centralizada na tela, 0 quando está fora
+  const t = Math.max(0, 1 - dist / maxDist);
+  const eased = t * t * (3 - 2 * t); // smoothstep — entrada/saída suave, sem "solavanco"
+
+  content.style.opacity = eased.toFixed(3);
+  content.style.transform = `translateY(${((1 - eased) * 34).toFixed(1)}px)`;
 }
 
 /* ---------- 6. CARROSSEL DE AVALIAÇÕES (arrastável) ---------- */
@@ -337,16 +370,32 @@ function initLightbox() {
   const imgEl = document.getElementById("lightbox-img");
   const captionEl = document.getElementById("lightbox-caption");
   const closeBtn = lightbox?.querySelector(".lightbox-close");
-  const triggers = document.querySelectorAll("[data-lightbox]");
+  const prevBtn = lightbox?.querySelector(".lightbox-prev");
+  const nextBtn = lightbox?.querySelector(".lightbox-next");
+  const triggers = Array.from(document.querySelectorAll("[data-lightbox]"));
   if (!lightbox || !imgEl || !triggers.length) return;
 
   let lastFocused = null;
+  let currentIndex = 0;
 
-  function open(src, caption) {
+  // Some as setas de navegação se houver só uma foto na galeria
+  const hasMultiple = triggers.length > 1;
+  if (!hasMultiple) {
+    prevBtn?.setAttribute("hidden", "");
+    nextBtn?.setAttribute("hidden", "");
+  }
+
+  function render(index) {
+    currentIndex = (index + triggers.length) % triggers.length; // navegação circular
+    const trigger = triggers[currentIndex];
+    imgEl.src = trigger.dataset.lightbox;
+    imgEl.alt = trigger.dataset.caption || "";
+    captionEl.textContent = trigger.dataset.caption || "";
+  }
+
+  function open(index) {
     lastFocused = document.activeElement;
-    imgEl.src = src;
-    imgEl.alt = caption || "";
-    captionEl.textContent = caption || "";
+    render(index);
     lightbox.hidden = false;
     // pequeno delay pra permitir a transição de opacidade/escala rodar
     requestAnimationFrame(() => lightbox.classList.add("is-open"));
@@ -364,18 +413,22 @@ function initLightbox() {
     lastFocused?.focus();
   }
 
-  triggers.forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      open(trigger.dataset.lightbox, trigger.dataset.caption);
-    });
+  triggers.forEach((trigger, index) => {
+    trigger.addEventListener("click", () => open(index));
   });
+
+  prevBtn?.addEventListener("click", () => render(currentIndex - 1));
+  nextBtn?.addEventListener("click", () => render(currentIndex + 1));
 
   closeBtn?.addEventListener("click", close);
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) close(); // clique fora da imagem fecha
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !lightbox.hidden) close();
+    if (lightbox.hidden) return;
+    if (e.key === "Escape") close();
+    if (hasMultiple && e.key === "ArrowLeft") render(currentIndex - 1);
+    if (hasMultiple && e.key === "ArrowRight") render(currentIndex + 1);
   });
 }
 

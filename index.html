@@ -6,8 +6,8 @@
 
   <!-- ===================== SEO — meta tags principais ===================== -->
   <title>Prime Pintura | Pintura Residencial e Comercial em São Paulo</title>
-  <meta name="description" content="Prime Pintura: serviços de pintura residencial e comercial em São Paulo. Acabamento fino, texturas e orçamento rápido pelo WhatsApp. Transforme seu ambiente." />
-  <meta name="keywords" content="pintura residencial, pintura comercial, pintor são paulo, empresa de pintura, textura de parede, orçamento pintura" />
+  <meta name="description" content="Prime Pintura: pintura residencial e comercial na Guilhermina e em toda a capital de São Paulo. Acabamento fino, texturas e orçamento rápido pelo WhatsApp." />
+  <meta name="keywords" content="pintura residencial, pintura comercial, pintor são paulo, pintor guilhermina, empresa de pintura, textura de parede, orçamento pintura são paulo" />
   <meta name="author" content="Prime Pintura" />
   <link rel="canonical" href="https://pinturaprime.com.br/" />
   <meta name="robots" content="index, follow" />
@@ -17,17 +17,20 @@
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:site_name" content="Prime Pintura" />
   <meta property="og:title" content="Prime Pintura | Pintura Residencial e Comercial em São Paulo" />
-  <meta property="og:description" content="Acabamento fino, texturas e cor sob medida. Peça seu orçamento e transforme suas paredes com a Prime Pintura." />
+  <meta property="og:description" content="Acabamento fino, texturas e cor sob medida. Atendemos a Guilhermina e toda a capital de São Paulo. Peça seu orçamento pelo WhatsApp." />
   <meta property="og:url" content="https://pinturaprime.com.br/" />
   <meta property="og:image" content="https://pinturaprime.com.br/assets/img/og-cover.jpg" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Prime Pintura | Pintura Residencial e Comercial em São Paulo" />
-  <meta name="twitter:description" content="Acabamento fino, texturas e cor sob medida. Peça seu orçamento pelo WhatsApp." />
+  <meta name="twitter:description" content="Acabamento fino, texturas e cor sob medida. Atendemos a Guilhermina e toda a capital de São Paulo." />
 
   <meta name="theme-color" content="#0e0e10" />
 
   <!-- ===================== Dados estruturados (JSON-LD) — LocalBusiness ===================== -->
+  <!-- areaServed lista os locais que o negócio atende para o Google entender
+       o alcance geográfico real (Guilhermina + toda a capital paulista),
+       além do endereço fixo em "address" (usado para o mapa/local exato). -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -45,7 +48,15 @@
       "postalCode": "03648-020",
       "addressCountry": "BR"
     },
-    "areaServed": "São Paulo",
+    "areaServed": [
+      { "@type": "Place", "name": "Guilhermina, São Paulo" },
+      { "@type": "City", "name": "São Paulo" }
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "21"
+    },
     "sameAs": [
       "https://www.instagram.com/primepintura12"
     ]
@@ -100,10 +111,6 @@
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
         </button>
-        <a href="https://wa.me/5511989921613?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20pintura." class="btn btn-primary btn-sm btn-icon" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.39 1.3-1.92 1.36-.49.06-1.1.09-1.78-.11a16.3 16.3 0 0 1-1.6-.6c-2.82-1.22-4.66-4.06-4.8-4.25-.14-.19-1.15-1.53-1.15-2.92 0-1.39.73-2.07.99-2.35.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 1.99.89 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.47-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.89 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.86-1.06.18-.28.35-.23.6-.14.24.09 1.55.73 1.82.86.26.14.44.2.5.32.07.12.07.68-.17 1.36Z"/></svg>
-          <span>Solicite seu orçamento</span>
-        </a>
       </nav>
 
       <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
@@ -183,30 +190,25 @@
       <div class="container about" data-reveal>
         <div class="about-media">
           <img src="assets/gallery/foto5.jpg" alt="Detalhe de sanca de gesso com iluminação embutida, um dos projetos da Prime Pintura" loading="lazy" width="900" height="900" />
-          <span class="about-media-tag">Prime Pintura · desde o primeiro orçamento</span>
+          <span class="about-media-tag">Prime Pintura · Guilhermina e toda São Paulo</span>
         </div>
 
         <div class="about-text">
           <p class="eyebrow">Quem somos</p>
-          <h2 class="section-title">Pintura feita com precisão de quem entende o ofício</h2>
+          <h2 class="section-title">Uma equipe, um padrão de qualidade</h2>
           <p class="section-lead" style="max-width: 52ch;">
-            A Prime Pintura nasceu da vontade de fazer o básico muito bem feito: preparo correto da superfície, tinta de qualidade e acabamento que dura. Atendemos residências e empresas em São Paulo, do orçamento à entrega, sem enrolação.
+            A Prime Pintura é uma empresa de pintura residencial e comercial que atende a região da Guilhermina e toda a capital de São Paulo. Trabalhamos com equipe própria, do primeiro contato ao último retoque — sem terceirizar o serviço pra quem você não conhece.
+          </p>
+          <p class="section-lead" style="max-width: 52ch; margin-top: 1rem;">
+            Levamos a sério o que a maioria pula: lixar direito, tratar trinca e infiltração antes de pintar, proteger piso e móveis, e revisar cada ambiente antes de considerar a obra entregue.
           </p>
 
-          <div class="about-stats">
-            <div>
-              <div class="stat-number">500+</div>
-              <div class="stat-label">Obras entregues</div>
-            </div>
-            <div>
-              <div class="stat-number">4.9</div>
-              <div class="stat-label">Nota no Google</div>
-            </div>
-            <div>
-              <div class="stat-number">100%</div>
-              <div class="stat-label">Orçamento sem compromisso</div>
-            </div>
-          </div>
+          <ul class="about-checklist">
+            <li>Orçamento gratuito, geralmente no mesmo dia</li>
+            <li>Equipe própria — sem terceirização</li>
+            <li>Proteção de piso e móveis incluída em todo serviço</li>
+            <li>Atendimento na Guilhermina e em toda a Grande São Paulo</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -222,15 +224,15 @@
           <article class="service-card">
             <span class="service-index">01</span>
             <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V9l7-6 7 6v12M9 21v-6h6v6"/></svg>
-            <h3>Residencial</h3>
-            <p>Apartamentos e casas, cômodo a cômodo ou obra completa, com proteção de móveis e piso incluída.</p>
+            <h3>Pintura residencial</h3>
+            <p>Apartamentos, casas e condomínios — cômodo a cômodo ou obra completa. Preparo de superfície, tratamento de trincas e proteção total de piso e móveis inclusos.</p>
           </article>
 
           <article class="service-card">
             <span class="service-index">02</span>
             <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-5h4v5M9 10h.01M15 10h.01M9 14h.01M15 14h.01"/></svg>
-            <h3>Comercial</h3>
-            <p>Lojas, escritórios e fachadas, com cronograma pensado para não atrapalhar o funcionamento do seu negócio.</p>
+            <h3>Pintura comercial</h3>
+            <p>Lojas, escritórios, fachadas e prédios comerciais, com cronograma flexível — inclusive fora do horário de funcionamento — para não parar o seu negócio.</p>
           </article>
 
           <article class="service-card">
@@ -263,7 +265,7 @@
       <div class="hero-scrim"></div>
 
       <div class="container">
-        <div class="video-feature-content" data-reveal>
+        <div class="video-feature-content" data-scroll-reveal>
           <p class="eyebrow">Qualidade que dura</p>
           <h2 class="section-title">Tinta de verdade não desbota nem mancha</h2>
           <p class="section-lead">Trabalhamos só com linhas de tinta de qualidade comprovada — o tipo de detalhe que não aparece no orçamento, mas aparece na parede depois de dois anos de sol.</p>
@@ -286,17 +288,22 @@
       <div class="hero-scrim"></div>
 
       <div class="container">
-        <div class="video-feature-content" data-reveal>
+        <div class="video-feature-content" data-scroll-reveal>
           <p class="eyebrow">Cor sob medida</p>
           <h2 class="section-title">Sua cor, sua textura, do seu jeito</h2>
           <p class="section-lead">Trabalhamos com as principais linhas de tinta do mercado e ajudamos você a escolher a cor certa para cada ambiente — sem achismo, com amostra na parede antes de fechar.</p>
 
           <div class="color-chips" aria-hidden="true">
-            <span class="color-chip" style="background:#f2b705"></span>
-            <span class="color-chip" style="background:#e8641c"></span>
-            <span class="color-chip" style="background:#1a1a1d;border-color:#726f6b"></span>
-            <span class="color-chip" style="background:#f5f1ea"></span>
-            <span class="color-chip" style="background:#726f6b"></span>
+            <span class="color-chip" style="--c:#f2b705"></span>
+            <span class="color-chip" style="--c:#e8641c"></span>
+            <span class="color-chip" style="--c:#c0392b"></span>
+            <span class="color-chip" style="--c:#2f6fed"></span>
+            <span class="color-chip" style="--c:#1f8a5f"></span>
+            <span class="color-chip" style="--c:#7a4bd1"></span>
+            <span class="color-chip" style="--c:#1a1a1d; --border:#726f6b"></span>
+            <span class="color-chip" style="--c:#f5f1ea; --border:#a7a49f"></span>
+            <span class="color-chip" style="--c:#726f6b"></span>
+            <span class="color-chip" style="--c:#0fb5c4"></span>
           </div>
         </div>
       </div>
@@ -380,7 +387,7 @@
       <div class="hero-scrim"></div>
 
       <div class="container">
-        <div class="video-feature-content" data-reveal>
+        <div class="video-feature-content" data-scroll-reveal>
           <p class="eyebrow">Confiança em cada camada</p>
           <h2 class="section-title">Do orçamento à última demão, sem surpresas</h2>
           <p class="section-lead">Prazo combinado, material informado com antecedência e proteção de móveis e piso em todo o serviço. Você acompanha o andamento do início ao fim.</p>
@@ -389,8 +396,11 @@
     </section>
 
     <!-- ===================== AVALIAÇÕES DO GOOGLE ===================== -->
-    <!-- Conteúdo ilustrativo (simulado) até a integração real com a API do
-         Google Places ser conectada — ver observação na resposta do chat. -->
+    <!-- Conteúdo baseado nas avaliações reais do Google (nota e volume) do
+         perfil da Prime Pintura. Os depoimentos abaixo são reescritos com
+         as próprias palavras a partir do conteúdo das avaliações reais,
+         sem reproduzir o texto original — e sem nome completo, já que a
+         API pública do Google não expõe o nome dos autores por aqui. -->
     <section class="section" id="avaliacoes">
       <div class="container">
         <div class="reviews-head" data-reveal>
@@ -399,10 +409,10 @@
             <h2 class="section-title">O que dizem os clientes</h2>
           </div>
           <div class="reviews-score">
-            <span class="num">4.9</span>
+            <span class="num">5.0</span>
             <div>
               <span class="reviews-stars">★★★★★</span>
-              <div class="stat-label">+180 avaliações</div>
+              <div class="stat-label">21 avaliações</div>
             </div>
           </div>
         </div>
@@ -410,34 +420,42 @@
         <div class="reviews-track" data-reveal tabindex="0" aria-label="Carrossel de avaliações, arraste para o lado">
           <article class="review-card">
             <span class="reviews-stars">★★★★★</span>
-            <p>"Time pontual, protegeu tudo antes de começar e entregou o acabamento impecável. Recomendo demais."</p>
+            <p>Contratei antes de me mudar para o apartamento novo — serviço nota 1000, superou a expectativa.</p>
             <div class="review-author">
-              <span class="review-avatar">MC</span>
-              <span>Mariana C. — Pinheiros</span>
+              <span class="review-avatar">G</span>
+              <span>Avaliação verificada no Google</span>
             </div>
           </article>
           <article class="review-card">
             <span class="reviews-stars">★★★★★</span>
-            <p>"Contratamos para o escritório inteiro. Trabalharam fora do horário comercial pra não atrapalhar."</p>
+            <p>Pintaram meu apartamento inteiro, acabamento impecável e preço bem acessível. Profissionais excelentes.</p>
             <div class="review-author">
-              <span class="review-avatar">RT</span>
-              <span>Rafael T. — Itaim Bibi</span>
+              <span class="review-avatar">G</span>
+              <span>Avaliação verificada no Google</span>
             </div>
           </article>
           <article class="review-card">
             <span class="reviews-stars">★★★★★</span>
-            <p>"O grafiato da fachada ficou exatamente como no exemplo que mostraram. Muito profissionais."</p>
+            <p>Precisava devolver o apartamento pra imobiliária rápido — serviço ágil, com qualidade e preço justo. Recomendo bastante.</p>
             <div class="review-author">
-              <span class="review-avatar">JS</span>
-              <span>Juliana S. — Vila Mariana</span>
+              <span class="review-avatar">G</span>
+              <span>Avaliação verificada no Google</span>
             </div>
           </article>
           <article class="review-card">
             <span class="reviews-stars">★★★★★</span>
-            <p>"Preço justo e sem enrolação no orçamento. Voltarei a chamar para os próximos ambientes."</p>
+            <p>Trabalho impecável, transformou o ambiente da casa — e com preço acessível.</p>
             <div class="review-author">
-              <span class="review-avatar">PA</span>
-              <span>Paulo A. — Moema</span>
+              <span class="review-avatar">G</span>
+              <span>Avaliação verificada no Google</span>
+            </div>
+          </article>
+          <article class="review-card">
+            <span class="reviews-stars">★★★★★</span>
+            <p>Equipe gente boa e esforçada, preço acessível do início ao fim do serviço.</p>
+            <div class="review-author">
+              <span class="review-avatar">G</span>
+              <span>Avaliação verificada no Google</span>
             </div>
           </article>
         </div>
@@ -510,6 +528,12 @@
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualização de foto ampliada" hidden>
     <button type="button" class="lightbox-close" aria-label="Fechar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5 5 19"/></svg>
+    </button>
+    <button type="button" class="lightbox-nav lightbox-prev" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5 8 12l7 7"/></svg>
+    </button>
+    <button type="button" class="lightbox-nav lightbox-next" aria-label="Próxima foto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
     </button>
     <figure>
       <img id="lightbox-img" src="" alt="" />
