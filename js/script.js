@@ -71,6 +71,7 @@ function initHeader() {
 function initMobileMenu() {
   const toggle = document.querySelector(".nav-toggle");
   const menu = document.querySelector(".mobile-menu");
+  const closeBtn = document.querySelector(".mobile-menu-close");
   if (!toggle || !menu) return;
 
   const closeMenu = () => {
@@ -85,6 +86,13 @@ function initMobileMenu() {
     toggle.setAttribute("aria-expanded", String(isOpen));
   });
 
+  closeBtn?.addEventListener("click", closeMenu);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.classList.contains("is-open")) closeMenu();
+  });
+
+  // Links de navegação fecham o menu ao clicar (mas não o botão de tema,
+  // que também pode estar dentro do overlay e não deve fechar nada)
   menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 }
 

@@ -42,7 +42,15 @@
      é sempre escuro (vídeo/scrim), independente do tema claro/escuro. */
   --media-text: #f5f1ea;
   --media-text-muted: #a7a49f;
+  /* Faixa do header — SEMPRE um "chrome" escuro translúcido, independente
+     do tema claro/escuro da página. Isso evita o problema de contraste que
+     tínhamos antes: o logo e os ícones do header são sempre claros, então
+     um fundo de header que virasse claro no tema light os deixava
+     invisíveis. O toggle de tema abaixo afeta só as seções de conteúdo. */
   --header-bg-scrolled: rgba(14, 14, 16, 0.68);
+  /* Fundo do overlay do menu mobile — esse sim segue o tema, já que é mais
+     parecido com uma "página" de conteúdo do que com o chrome fixo do header. */
+  --menu-overlay-bg: rgba(14, 14, 16, 0.9);
 
   --orange: #e8641c;
   --orange-light: #ff8a42;
@@ -85,10 +93,10 @@
   --text-muted: #635e57;
   --text-dim: #938d84;
 
-  /* Faixa do menu, quando sólida (rolada), em branco quase opaco no tema
-     claro — no topo da página ela continua transparente em ambos os temas,
-     mostrando o vídeo do Hero por baixo. */
-  --header-bg-scrolled: rgba(250, 247, 242, 0.68);
+  /* O header (--header-bg-scrolled) NÃO muda com o tema — ver explicação
+     completa em :root, no início do arquivo. Só o overlay do menu mobile
+     segue o tema claro/escuro: */
+  --menu-overlay-bg: rgba(250, 247, 242, 0.94);
 }
 
 html { scroll-behavior: smooth; }
@@ -274,16 +282,13 @@ h1, h2, h3, .font-display {
 .site-header.is-scrolled {
   background: var(--header-bg-scrolled);
   backdrop-filter: blur(10px);
-  border-bottom-color: var(--line);
+  border-bottom-color: var(--line-strong);
   padding-block: 0.7rem;
 }
-/* Quando a faixa fica sólida, o texto passa a seguir o tema da página
-   (claro ou escuro) em vez da cor fixa usada sobre o vídeo do Hero. */
-.site-header.is-scrolled .main-nav a { color: var(--text-muted); }
-.site-header.is-scrolled .main-nav a:hover { color: var(--text); }
-.site-header.is-scrolled .nav-toggle span { background: var(--text); }
-.site-header.is-scrolled .theme-toggle { color: var(--text); }
-.site-header.is-scrolled .theme-toggle:hover { background: var(--line); }
+/* O header é sempre um "chrome" escuro (ver --header-bg-scrolled em
+   :root), então nav/hambúrguer/tema continuam com a cor fixa clara
+   (--media-text) o tempo todo — não precisam mudar ao rolar. */
+
 
 .site-header .container {
   display: flex;
@@ -297,13 +302,13 @@ h1, h2, h3, .font-display {
   align-items: center;
 }
 .logo-img {
-  height: clamp(42px, 8vw, 58px);
+  height: clamp(48px, 9vw, 66px);
   width: auto;
   display: block;
 }
-.footer-brand .logo-img { height: clamp(38px, 7vw, 50px); }
+.footer-brand .logo-img { height: clamp(40px, 7vw, 52px); }
 
-.main-nav { display: flex; align-items: center; gap: var(--space-md); }
+.main-nav { display: flex; align-items: center; }
 .main-nav ul { display: flex; gap: var(--space-md); }
 .main-nav a {
   font-family: var(--font-mono);
@@ -315,6 +320,16 @@ h1, h2, h3, .font-display {
   position: relative;
 }
 .main-nav a:hover { color: var(--media-text); }
+
+/* Agrupa tema + hambúrguer à direita do header — ficam sempre juntos,
+   inclusive em telas pequenas (antes o botão de tema, por estar dentro de
+   .main-nav, ficava "flutuando" sozinho no meio do header no mobile). */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: var(--space-md);
+}
 
 .nav-toggle {
   display: none;
@@ -868,8 +883,20 @@ button.gallery-item:focus-visible {
 
 /* ---------- 13. RODAPÉ ---------- */
 .site-footer {
+  position: relative;
+  background: var(--bg-alt);
   border-top: 1px solid var(--line);
   padding-block: var(--space-lg) var(--space-md);
+}
+/* Linha em degradê no topo do rodapé — a "corzinha" que diferencia o
+   rodapé do resto do fundo escuro/claro da página, na paleta da marca. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--paint-gradient);
 }
 .footer-grid {
   display: grid;
@@ -884,7 +911,7 @@ button.gallery-item:focus-visible {
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--orange-light);
   margin-bottom: var(--space-sm);
 }
 .footer-col li { margin-bottom: 0.6rem; }
@@ -1097,24 +1124,69 @@ button.gallery-item:focus-visible {
 }
 
 /* ---------- MENU MOBILE ---------- */
+/* Fundo translúcido com blur (efeito "vidro fosco"), seguindo o tema
+   claro/escuro da página — diferente do header, que é sempre escuro. */
 .mobile-menu {
   position: fixed;
   inset: 0;
   z-index: 105;
-  background: var(--bg);
+  background: var(--menu-overlay-bg);
+  backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: var(--space-lg) clamp(1.25rem, 8vw, 3rem);
+  padding: var(--space-md) clamp(1.25rem, 8vw, 3rem) var(--space-lg);
   transform: translateY(-100%);
   transition: transform 0.45s var(--ease);
 }
 .mobile-menu.is-open { transform: translateY(0); }
-.mobile-menu ul { display: flex; flex-direction: column; gap: 1.4rem; }
-.mobile-menu a {
+
+/* Barra do topo dentro do overlay: tema à esquerda, fechar à direita —
+   mesmo padrão de agrupamento usado no header principal. */
+.mobile-menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+.mobile-menu-close {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.mobile-menu-close:hover { background: var(--line); transform: rotate(90deg); }
+.mobile-menu-close svg { width: 18px; height: 18px; }
+.mobile-menu-top .theme-toggle { border: 1px solid var(--line-strong); }
+
+.mobile-menu nav { display: flex; flex-direction: column; justify-content: center; flex: 1; }
+
+/* Links organizados: número + texto, com divisórias sutis entre eles —
+   substitui o bloco de texto grande e "solto" que tinha antes. */
+.mobile-menu ul {
+  display: flex;
+  flex-direction: column;
+}
+.mobile-menu li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.mobile-menu li:first-child { border-top: 1px solid var(--line); }
+.mobile-menu-index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--orange-light);
+  letter-spacing: 0.05em;
+}
+.mobile-menu ul a {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 8vw, 2.6rem);
+  font-size: clamp(1.3rem, 6vw, 1.8rem);
   text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 .mobile-menu .btn-primary { margin-top: var(--space-md); width: fit-content; }
 .mobile-menu-footer {
@@ -1122,10 +1194,6 @@ button.gallery-item:focus-visible {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-.mobile-menu-footer .theme-toggle {
-  width: 44px; height: 44px;
-  border: 1px solid var(--line-strong);
 }
 
 /* Trava o scroll do body quando o menu mobile está aberto */
