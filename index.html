@@ -73,6 +73,23 @@
 </head>
 <body>
 
+  <!-- ===================== TELA DE CARREGAMENTO ===================== -->
+  <!-- Preloader em tela cheia, no estilo do site da Rockstar (GTA VI):
+       fundo preto, logo centralizado que aparece com um fade + leve escala,
+       e some suavemente assim que a página termina de carregar (ver
+       initPreloader em script.js). Fica visível por um tempo mínimo mesmo
+       em conexões rápidas, pra não "piscar" na tela. -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-logo-wrap">
+      <span class="preloader-pulse"></span>
+      <span class="preloader-pulse preloader-pulse--delay"></span>
+      <div class="preloader-logo-clip">
+        <img src="assets/img/loading-logo.jpg" alt="" class="preloader-logo" />
+        <span class="preloader-shine"></span>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== SKIP LINK (acessibilidade) ===================== -->
   <a href="#conteudo" class="visually-hidden">Pular para o conteúdo</a>
 
@@ -198,29 +215,6 @@
       </div>
     </section>
 
-    <!-- ===================== SEÇÃO DE VÍDEO — "Qualidade que dura" ===================== -->
-    <!-- Vídeo laranja (o mesmo que já foi Hero antes) reaproveitado aqui como
-         loop com parallax leve — mesma técnica das seções amarela/azul.
-         Posicionada logo após o Hero (a pedido do cliente) para manter a
-         sequência inicial toda animada, uma seção de vídeo puxando a outra. -->
-    <section class="video-feature">
-      <video autoplay muted loop playsinline preload="metadata"
-             poster="assets/video/laranja-poster.jpg"
-             aria-hidden="true">
-        <source src="assets/video/laranja-loop.webm" type="video/webm" />
-        <source src="assets/video/laranja-loop.mp4" type="video/mp4" />
-      </video>
-      <div class="hero-scrim"></div>
-
-      <div class="container">
-        <div class="video-feature-content" data-scroll-reveal>
-          <p class="eyebrow">Qualidade que dura</p>
-          <h2 class="section-title">Tinta de verdade não desbota nem mancha</h2>
-          <p class="section-lead">Trabalhamos só com linhas de tinta de qualidade comprovada — o tipo de detalhe que não aparece no orçamento, mas aparece na parede depois de dois anos de sol.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- ===================== QUEM SOMOS ===================== -->
     <section class="section" id="sobre">
       <div class="container about" data-reveal>
@@ -249,39 +243,25 @@
       </div>
     </section>
 
-    <!-- ===================== SEÇÃO DE VÍDEO — "Cores sob medida" ===================== -->
-    <!-- Vídeo amarelo em loop com leve parallax (deslocamento via JS conforme
-         o scroll), técnica mais leve que o scroll-scrubbing do Hero. Fica
-         entre Quem Somos e Serviços — intercalando vídeo/conteúdo/vídeo/
-         conteúdo, pra manter a página animada sem empilhar 3 vídeos seguidos
-         antes de qualquer informação real sobre a empresa. -->
+    <!-- ===================== SEÇÃO DE VÍDEO — "Qualidade que dura" ===================== -->
+    <!-- Vídeo laranja (o mesmo que já foi Hero antes) reaproveitado aqui como
+         loop com parallax leve — mesma técnica das seções amarela/azul.
+         Posicionada logo após o Hero (a pedido do cliente) para manter a
+         sequência inicial toda animada, uma seção de vídeo puxando a outra. -->
     <section class="video-feature">
       <video autoplay muted loop playsinline preload="metadata"
-             poster="assets/video/amarelo-poster.jpg"
+             poster="assets/video/laranja-poster.jpg"
              aria-hidden="true">
-        <source src="assets/video/amarelo-loop.webm" type="video/webm" />
-        <source src="assets/video/amarelo-loop.mp4" type="video/mp4" />
+        <source src="assets/video/laranja-loop.webm" type="video/webm" />
+        <source src="assets/video/laranja-loop.mp4" type="video/mp4" />
       </video>
       <div class="hero-scrim"></div>
 
       <div class="container">
         <div class="video-feature-content" data-scroll-reveal>
-          <p class="eyebrow">Cor sob medida</p>
-          <h2 class="section-title">Sua cor, sua textura, do seu jeito</h2>
-          <p class="section-lead">Trabalhamos com as principais linhas de tinta do mercado e ajudamos você a escolher a cor certa para cada ambiente — sem achismo, com amostra na parede antes de fechar.</p>
-
-          <div class="color-chips" aria-hidden="true">
-            <span class="color-chip" style="--c:#f2b705"></span>
-            <span class="color-chip" style="--c:#e8641c"></span>
-            <span class="color-chip" style="--c:#c0392b"></span>
-            <span class="color-chip" style="--c:#2f6fed"></span>
-            <span class="color-chip" style="--c:#1f8a5f"></span>
-            <span class="color-chip" style="--c:#7a4bd1"></span>
-            <span class="color-chip" style="--c:#1a1a1d; --border:#726f6b"></span>
-            <span class="color-chip" style="--c:#f5f1ea; --border:#a7a49f"></span>
-            <span class="color-chip" style="--c:#726f6b"></span>
-            <span class="color-chip" style="--c:#0fb5c4"></span>
-          </div>
+          <p class="eyebrow">Qualidade que dura</p>
+          <h2 class="section-title">Tinta de verdade não desbota nem mancha</h2>
+          <p class="section-lead">Trabalhamos só com linhas de tinta de qualidade comprovada — o tipo de detalhe que não aparece no orçamento, mas aparece na parede depois de dois anos de sol.</p>
         </div>
       </div>
     </section>
@@ -321,6 +301,42 @@
             <h3>Fino acabamento</h3>
             <p>Laca, esmalte sintético em portas e batentes, e todo detalhe que separa um serviço bom de um impecável.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SEÇÃO DE VÍDEO — "Cores sob medida" ===================== -->
+    <!-- Vídeo amarelo em loop com leve parallax (deslocamento via JS conforme
+         o scroll), técnica mais leve que o scroll-scrubbing do Hero. Fica
+         entre Serviços e Galeria — intercalando vídeo/conteúdo, sem duas
+         seções de vídeo grudadas uma embaixo da outra. -->
+    <section class="video-feature">
+      <video autoplay muted loop playsinline preload="metadata"
+             poster="assets/video/amarelo-poster.jpg"
+             aria-hidden="true">
+        <source src="assets/video/amarelo-loop.webm" type="video/webm" />
+        <source src="assets/video/amarelo-loop.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-scrim"></div>
+
+      <div class="container">
+        <div class="video-feature-content" data-scroll-reveal>
+          <p class="eyebrow">Cor sob medida</p>
+          <h2 class="section-title">Sua cor, sua textura, do seu jeito</h2>
+          <p class="section-lead">Trabalhamos com as principais linhas de tinta do mercado e ajudamos você a escolher a cor certa para cada ambiente — sem achismo, com amostra na parede antes de fechar.</p>
+
+          <div class="color-chips" aria-hidden="true">
+            <span class="color-chip" style="--c:#f2b705"></span>
+            <span class="color-chip" style="--c:#e8641c"></span>
+            <span class="color-chip" style="--c:#c0392b"></span>
+            <span class="color-chip" style="--c:#2f6fed"></span>
+            <span class="color-chip" style="--c:#1f8a5f"></span>
+            <span class="color-chip" style="--c:#7a4bd1"></span>
+            <span class="color-chip" style="--c:#1a1a1d; --border:#726f6b"></span>
+            <span class="color-chip" style="--c:#f5f1ea; --border:#a7a49f"></span>
+            <span class="color-chip" style="--c:#726f6b"></span>
+            <span class="color-chip" style="--c:#0fb5c4"></span>
+          </div>
         </div>
       </div>
     </section>

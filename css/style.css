@@ -237,6 +237,12 @@ h1, h2, h3, .font-display {
 }
 .btn-outline:hover { border-color: var(--orange-light); color: var(--orange-light); transform: translateY(-2px); }
 
+.hero-actions .btn-outline {
+  color: var(--media-text);
+  border-color: rgba(245,241,234,0.4);
+}
+.hero-actions .btn-outline:hover { border-color: var(--orange-light); color: var(--orange-light); }
+
 .btn-sm { padding: 0.42em 1.05em; font-size: 0.66rem; letter-spacing: 0.04em; }
 
 .btn-icon { gap: 0.5em; }
@@ -268,6 +274,145 @@ h1, h2, h3, .font-display {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ---------- PRELOADER (tela de carregamento) ---------- */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 999; /* acima de tudo, inclusive do header e do lightbox */
+  background: #050506;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.7s ease;
+}
+.preloader-logo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.85);
+  animation: preloader-in 1.1s var(--ease) forwards;
+}
+
+/* Anel neon giratório atrás do logo — usa @property pra animar o ângulo
+   do conic-gradient de forma suave. Em navegadores sem suporte a
+   @property (ex: Firefox mais antigo), o anel some suavemente: ainda dá
+   pra ver o brilho pulsante do logo, só sem o giro. */
+@property --ring-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.preloader-logo-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(from var(--ring-angle),
+    var(--yellow) 0deg, var(--orange) 90deg, #ff3d7f 180deg,
+    var(--orange) 270deg, var(--yellow) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: blur(0.5px) drop-shadow(0 0 14px rgba(232,100,28,0.65)) drop-shadow(0 0 26px rgba(242,183,5,0.4));
+  animation: preloader-ring-spin 3.2s linear infinite;
+}
+@keyframes preloader-ring-spin {
+  to { --ring-angle: 360deg; }
+}
+
+.preloader-logo {
+  position: relative;
+  z-index: 1;
+  width: min(220px, 42vw);
+  height: auto;
+  display: block;
+  /* Brilho neon pulsante por trás do logo, alternando entre as cores da
+     marca — o box-shadow não é cortado pelo overflow do clip ao lado, então
+     o halo aparece por fora do círculo normalmente. */
+  animation: preloader-glow-pulse 2.4s ease-in-out infinite;
+}
+@keyframes preloader-glow-pulse {
+  0%, 100% { box-shadow: 0 0 30px 6px rgba(232,100,28,0.45), 0 0 60px 14px rgba(232,100,28,0.18); }
+  50%      { box-shadow: 0 0 40px 10px rgba(242,183,5,0.55), 0 0 74px 20px rgba(242,183,5,0.22); }
+}
+
+/* Recorte circular do logo + vinheta nas bordas (a foto original tem um
+   fundo em textura de concreto — a vinheta esmaece as bordas até ficarem
+   transparentes, fazendo a imagem se misturar ao preto do preloader em vez
+   de aparecer como um "quadrado" duro). O overflow:hidden aqui também é o
+   que mantém o brilho .preloader-shine (abaixo) contido dentro do círculo. */
+.preloader-logo-clip {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 78%);
+  mask-image: radial-gradient(circle, #000 58%, transparent 78%);
+}
+
+/* Brilho diagonal que atravessa o logo periodicamente, tipo reflexo de luz
+   passando — mesma ideia do brilho nos botões, só que em loop contínuo em
+   vez de só no hover. */
+.preloader-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255,255,255,0.75) 48%,
+    rgba(255,220,150,0.55) 52%,
+    transparent 70%);
+  transform: translateX(-120%);
+  animation: preloader-shine-sweep 2.8s ease-in-out infinite;
+  animation-delay: 0.6s;
+  pointer-events: none;
+}
+@keyframes preloader-shine-sweep {
+  0%, 40%  { transform: translateX(-120%); }
+  60%      { transform: translateX(120%); }
+  100%     { transform: translateX(120%); }
+}
+
+/* Anéis "sonar": expandem a partir do tamanho do logo e desaparecem,
+   um logo em seguida do outro (delay), criando um pulso contínuo ao redor. */
+.preloader-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--orange-light);
+  opacity: 0;
+  animation: preloader-pulse-ring 2.6s ease-out infinite;
+}
+.preloader-pulse--delay { animation-delay: 1.3s; }
+@keyframes preloader-pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.65; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+@keyframes preloader-in {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Estado final, adicionado via JS quando a página termina de carregar —
+   dá um fade suave e libera o scroll do body. */
+.preloader.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader-logo-wrap { animation: none; opacity: 1; transform: none; }
+  .preloader-logo, .preloader-logo-wrap::before,
+  .preloader-shine, .preloader-pulse { animation: none; }
+  .preloader-shine, .preloader-pulse { display: none; }
+}
+
+/* Trava o scroll enquanto a tela de carregamento está visível */
+body:has(.preloader:not(.is-done)) { overflow: hidden; }
 
 /* ---------- 4. HEADER / NAVEGAÇÃO ---------- */
 .site-header {

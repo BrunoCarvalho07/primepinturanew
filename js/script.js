@@ -17,9 +17,12 @@
  *  6. Carrossel de avaliações: arrastável com mouse/touch
  *  7. Lightbox: amplia a foto da galeria ao clicar
  *  8. Reveal on scroll: fade/slide leve para elementos ao entrarem na tela
+ *  9. Preloader: tela de carregamento com o logo, some quando a página
+ *     termina de carregar (estilo do site do GTA VI)
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  initPreloader();
   initTheme();
   initHeader();
   initMobileMenu();
@@ -31,6 +34,37 @@ document.addEventListener("DOMContentLoaded", () => {
   initLightbox();
   setYear();
 });
+
+/* ---------- 9. PRELOADER ---------- */
+/**
+ * Fica visível por pelo menos MIN_DISPLAY_MS (pra não "piscar" em conexões
+ * rápidas, mesmo carregamento sendo instantâneo) e some assim que a página
+ * inteira carregar (window "load" — inclui imagens, vídeos com preload, etc)
+ * ou depois de um tempo máximo de segurança, o que vier primeiro, pra nunca
+ * travar o visitante numa tela preta caso algum recurso demore demais.
+ */
+function initPreloader() {
+  const preloader = document.getElementById("preloader");
+  if (!preloader) return;
+
+  const MIN_DISPLAY_MS = 900;
+  const MAX_WAIT_MS = 4000;
+  const startedAt = Date.now();
+  let done = false;
+
+  function hide() {
+    if (done) return;
+    done = true;
+    const elapsed = Date.now() - startedAt;
+    const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+    setTimeout(() => preloader.classList.add("is-done"), remaining);
+  }
+
+  window.addEventListener("load", hide);
+  setTimeout(hide, MAX_WAIT_MS); // rede de segurança
+}
+
+
 
 /* ---------- 0. TEMA CLARO/ESCURO ---------- */
 /**
