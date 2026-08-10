@@ -29,19 +29,19 @@
   --bg: #0e0e10;
   --bg-alt: #131315;
   --surface: #1a1a1d;
-  --surface-2: #232327;
-  --line: rgba(245, 241, 234, 0.10);
-  --line-strong: rgba(245, 241, 234, 0.18);
+  --surface-2: #272323;
+  --line: rgba(234, 245, 235, 0.1);
+  --line-strong: rgba(234, 245, 234, 0.18);
 
   --text: #f5f1ea;
   --text-muted: #a7a49f;
-  --text-dim: #726f6b;
+  --text-dim: #6b726d;
 
   /* Cores fixas usadas SOMENTE sobre mídia (vídeo/foto) — Hero, seções de
      vídeo, legendas de galeria. Não mudam com o tema, porque o fundo ali
      é sempre escuro (vídeo/scrim), independente do tema claro/escuro. */
   --media-text: #f5f1ea;
-  --media-text-muted: #a7a49f;
+  --media-text-muted: #cfcfcf;
   /* Faixa do header — SEMPRE um "chrome" escuro translúcido, independente
      do tema claro/escuro da página. Isso evita o problema de contraste que
      tínhamos antes: o logo e os ícones do header são sempre claros, então
