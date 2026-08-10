@@ -111,9 +111,6 @@ do projeto).
 ## Pendências conhecidas
 
 - Um card da seção "Fotos" ainda está com placeholder genérico (sem foto
-  real de projeto comercial).
-- Instagram e endereço devem ser revisados periodicamente caso a empresa
-  mude de local ou perfil.
 
 ---
 
