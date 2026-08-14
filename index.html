@@ -2,6 +2,16 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+
+  <!-- ===================== Google Analytics (GA4) ===================== -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQV42GDEM2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CQV42GDEM2');
+  </script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <!-- ===================== SEO — meta tags principais ===================== -->
@@ -20,10 +30,15 @@
   <meta property="og:description" content="Acabamento fino, texturas e cor sob medida. Atendemos a Guilhermina e toda a capital de São Paulo. Peça seu orçamento pelo WhatsApp." />
   <meta property="og:url" content="https://pinturaprime.com.br/" />
   <meta property="og:image" content="https://pinturaprime.com.br/assets/img/og-cover.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Prime Pintura — pintura residencial e comercial em São Paulo" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Prime Pintura | Pintura Residencial e Comercial em São Paulo" />
   <meta name="twitter:description" content="Acabamento fino, texturas e cor sob medida. Atendemos a Guilhermina e toda a capital de São Paulo." />
+  <meta name="twitter:image" content="https://pinturaprime.com.br/assets/img/og-cover.jpg" />
 
   <meta name="theme-color" content="#0e0e10" />
 
@@ -48,14 +63,27 @@
       "postalCode": "03648-020",
       "addressCountry": "BR"
     },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": -23.5269036,
+      "longitude": -46.5252139
+    },
     "areaServed": [
       { "@type": "Place", "name": "Guilhermina, São Paulo" },
       { "@type": "City", "name": "São Paulo" }
     ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      }
+    ],
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "5.0",
-      "reviewCount": "21"
+      "reviewCount": "18"
     },
     "sameAs": [
       "https://www.instagram.com/primepintura12"
@@ -69,7 +97,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="icon" type="image/png" href="assets/logo/loading-logo.jpg" />
+  <link rel="icon" type="image/jpeg" href="assets/logo/loading-logo.jpg" sizes="520x520" />
+  <link rel="apple-touch-icon" href="assets/logo/loading-logo.jpg" />
 </head>
 <body>
 
@@ -219,15 +248,15 @@
     <section class="section" id="sobre">
       <div class="container about" data-reveal>
         <div class="about-media">
-          <img src="assets/gallery/foto5.jpg" alt="Detalhe de sanca de gesso com iluminação embutida, um dos projetos da Prime Pintura" loading="lazy" width="900" height="900" />
-          <span class="about-media-tag">Prime Pintura · Guilhermina e toda São Paulo</span>
+          <img src="assets/logo/loading-logo.jpg" alt="Detalhe de sanca de gesso com iluminação embutida, um dos projetos da Prime Pintura" loading="lazy" width="900" height="900" />
+          <span class="about-media-tag">Prime Pintura · Vila Guilhermina e toda São Paulo</span>
         </div>
 
         <div class="about-text">
           <p class="eyebrow">Quem somos</p>
           <h2 class="section-title">Uma equipe, um padrão de qualidade</h2>
           <p class="section-lead" style="max-width: 52ch;">
-            A Prime Pintura é uma empresa de pintura residencial e comercial que atende a região da Guilhermina e toda a capital de São Paulo. Trabalhamos com equipe própria, do primeiro contato ao último retoque — sem terceirizar o serviço pra quem você não conhece.
+            A Prime Pintura é uma empresa de pintura residencial e comercial que atende a região da Vila Guilhermina e toda a capital de São Paulo. Trabalhamos com equipe própria, do primeiro contato ao último retoque — sem terceirizar o serviço pra quem você não conhece.
           </p>
           <p class="section-lead" style="max-width: 52ch; margin-top: 1rem;">
             Levamos a sério o que a maioria pula: lixar direito, tratar trinca e infiltração antes de pintar, proteger piso e móveis, e revisar cada ambiente antes de considerar a obra entregue.
@@ -271,7 +300,7 @@
       <div class="container">
         <p class="eyebrow" data-reveal>O que fazemos</p>
         <h2 class="section-title" data-reveal>Serviços</h2>
-        <p class="section-lead" data-reveal>Do apartamento novo à fachada comercial — cada projeto recebe o preparo e o acabamento certos para o ambiente.</p>
+        <p class="section-lead" data-reveal>Do apartamento novo à fachada comercial — cada projeto recebe o preparo e o acabamento certos para cada ambiente.</p>
 
         <div class="services-grid" data-reveal="stagger">
           <article class="service-card">
@@ -393,15 +422,46 @@
             </span>
           </button>
           
-          <div class="gallery-item is-placeholder">
-            <div class="ph-fill" style="--gallery-gradient: linear-gradient(135deg, #3a3a3f, #1a1a1d);"></div>
-            <img src="assets/gallery/foto6.jpg" alt="Fachada de sobrado em fase final de acabamento" loading="lazy" width="900" height="900" />
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto6.jpg" data-caption="Comercial — Fachada · prédio comercial">
+            <img src="assets/gallery/foto6.jpg" alt="Fachada de prédio comercial pintada pela Prime Pintura" loading="lazy" width="756" height="1600" />
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Comercial</span>
-              <strong>Predio comercial </strong>
+              <strong>Prédio comercial</strong>
             </span>
-          </div>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto7.jpg" data-caption="Residencial — Fachada · acabamento em pedra">
+            <img src="assets/gallery/foto7.jpg" alt="Fachada residencial em tom bege com detalhes em pedra e portão de ferro pintados pela Prime Pintura" loading="lazy" width="720" height="1282" />
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
+              <strong>condomínio · com acabamento </strong>
+            </span>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto9.jpg" data-caption="Residencial — Quarto · revestimento e iluminação">
+            <img src="assets/gallery/foto9.jpg" alt="Quarto com parede em revestimento cinza e iluminação embutida no teto, obra da Prime Pintura" loading="lazy" width="756" height="1600" />
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
+              <strong>Quarto · Cada detalhe feito com carinho</strong>
+            </span>
+          </button>
+          <button type="button" class="gallery-item span-2" data-lightbox="assets/gallery/foto10.jpg" data-caption="Residencial — Fachada · pintura em execução">
+            <img src="assets/gallery/foto10.jpg" alt="Pintor da Prime Pintura aplicando tinta em portão de fachada residencial verde" loading="lazy" width="720" height="1282" />
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
+              <strong>Fachada · pintura em execução</strong>
+            </span>
+          </button>
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto11.jpg" data-caption="Residencial — Fachada · sobrado geminado">
+            <img src="assets/gallery/foto11.jpg" alt="Fachada de sobrado geminado em tom cinza claro pintada pela Prime Pintura" loading="lazy" width="721" height="1600" />
+            <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
+            <span class="gallery-caption">
+              <span class="eyebrow">Residencial</span>
+              <strong>Fachada · sobrado geminado</strong>
+            </span>
+          </button>
         </div>
       </div>
     </section>
@@ -444,7 +504,7 @@
             <span class="num">5.0</span>
             <div>
               <span class="reviews-stars">★★★★★</span>
-              <div class="stat-label">21 avaliações</div>
+              <div class="stat-label">18 avaliações</div>
             </div>
           </div>
         </div>
