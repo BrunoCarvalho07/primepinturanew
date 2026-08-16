@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" x-data="ppApp()" :data-theme="theme" @keydown.escape.window="closeMenu()">
 <head>
   <meta charset="UTF-8" />
 
@@ -13,6 +13,45 @@
   </script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <!-- ===================== Alpine.js ===================== -->
+  <!-- Usado só para o tema claro/escuro e o menu mobile — interações simples
+       de estado, que ficam mais legíveis como diretivas no HTML do que como
+       addEventListener espalhado no JS. O resto do site (canvas do Hero,
+       parallax dos vídeos, lightbox, drag do carrossel) continua em JS puro
+       de propósito: são loops de scroll/animação de alta frequência, onde
+       manter controle direto sobre quando cada cálculo roda é mais seguro
+       e evita reatividade desnecessária brigando com o rAF. -->
+  <script>
+    // Aplica o tema salvo (ou preferência do sistema) ANTES do Alpine
+    // carregar, pra não ter flash de tema errado — mesma lógica que já
+    // existia em script.js, só que síncrona e mais cedo.
+    (function () {
+      var stored = localStorage.getItem("pp-theme");
+      var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", stored || (prefersLight ? "light" : "dark"));
+    })();
+
+    function ppApp() {
+      return {
+        theme: document.documentElement.getAttribute("data-theme"),
+        menuOpen: false,
+        toggleTheme() {
+          this.theme = this.theme === "light" ? "dark" : "light";
+          localStorage.setItem("pp-theme", this.theme);
+        },
+        openMenu() {
+          this.menuOpen = true;
+          document.body.classList.add("menu-open");
+        },
+        closeMenu() {
+          this.menuOpen = false;
+          document.body.classList.remove("menu-open");
+        },
+      };
+    }
+  </script>
+  <script defer src="js/vendor/alpine-3.14.1.min.js"></script>
 
   <!-- ===================== SEO — meta tags principais ===================== -->
   <title>Prime Pintura | Pintura Residencial e Comercial em São Paulo</title>
@@ -159,11 +198,11 @@
            "flutuando" sozinho no meio do header em telas pequenas (era o
            que acontecia antes, por ele estar dentro de .main-nav). -->
       <div class="header-actions">
-        <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+        <button class="theme-toggle" aria-label="Alternar tema claro/escuro" @click="toggleTheme()">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
         </button>
-        <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+        <button class="nav-toggle" aria-label="Abrir menu" @click="openMenu()" :aria-expanded="menuOpen">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -171,20 +210,20 @@
   </header>
 
   <!-- ===================== MENU MOBILE (overlay) ===================== -->
-  <div class="mobile-menu" id="topo">
+  <div class="mobile-menu" id="topo" :class="{ 'is-open': menuOpen }">
     <!-- Topo do overlay: tema à esquerda, fechar à direita — mesma lógica
          de agrupamento do header principal. -->
     <div class="mobile-menu-top">
-      <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+      <button class="theme-toggle" aria-label="Alternar tema claro/escuro" @click="toggleTheme()">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
       </button>
-      <button type="button" class="mobile-menu-close" aria-label="Fechar menu">
+      <button type="button" class="mobile-menu-close" aria-label="Fechar menu" @click="closeMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5 5 19"/></svg>
       </button>
     </div>
 
-    <nav aria-label="Navegação mobile">
+    <nav aria-label="Navegação mobile" @click="closeMenu()">
       <ul>
         <li><span class="mobile-menu-index">01</span><a href="#sobre">Quem somos</a></li>
         <li><span class="mobile-menu-index">02</span><a href="#servicos">Serviços</a></li>
@@ -248,15 +287,18 @@
     <section class="section" id="sobre">
       <div class="container about" data-reveal>
         <div class="about-media">
-          <img src="assets/logo/loading-logo.jpg" alt="Detalhe de sanca de gesso com iluminação embutida, um dos projetos da Prime Pintura" loading="lazy" width="900" height="900" />
-          <span class="about-media-tag">Prime Pintura · Vila Guilhermina e toda São Paulo</span>
+          <picture>
+            <source srcset="assets/gallery/foto5.webp" type="image/webp" />
+            <img src="assets/gallery/foto5.jpg" alt="Detalhe de sanca de gesso com iluminação embutida, um dos projetos da Prime Pintura" loading="lazy" width="900" height="900" />
+          </picture>
+          <span class="about-media-tag">Prime Pintura · Guilhermina e toda São Paulo</span>
         </div>
 
         <div class="about-text">
           <p class="eyebrow">Quem somos</p>
           <h2 class="section-title">Uma equipe, um padrão de qualidade</h2>
           <p class="section-lead" style="max-width: 52ch;">
-            A Prime Pintura é uma empresa de pintura residencial e comercial que atende a região da Vila Guilhermina e toda a capital de São Paulo. Trabalhamos com equipe própria, do primeiro contato ao último retoque — sem terceirizar o serviço pra quem você não conhece.
+            A Prime Pintura é uma empresa de pintura residencial e comercial que atende a região da Guilhermina e toda a capital de São Paulo. Trabalhamos com equipe própria, do primeiro contato ao último retoque — sem terceirizar o serviço pra quem você não conhece.
           </p>
           <p class="section-lead" style="max-width: 52ch; margin-top: 1rem;">
             Levamos a sério o que a maioria pula: lixar direito, tratar trinca e infiltração antes de pintar, proteger piso e móveis, e revisar cada ambiente antes de considerar a obra entregue.
@@ -300,7 +342,7 @@
       <div class="container">
         <p class="eyebrow" data-reveal>O que fazemos</p>
         <h2 class="section-title" data-reveal>Serviços</h2>
-        <p class="section-lead" data-reveal>Do apartamento novo à fachada comercial — cada projeto recebe o preparo e o acabamento certos para cada ambiente.</p>
+        <p class="section-lead" data-reveal>Do apartamento novo à fachada comercial — cada projeto recebe o preparo e o acabamento certos para o ambiente.</p>
 
         <div class="services-grid" data-reveal="stagger">
           <article class="service-card">
@@ -371,9 +413,8 @@
     </section>
 
     <!-- ===================== GALERIA DE FOTOS ===================== -->
-    <!-- PLACEHOLDER: 1 cartão ainda usa bloco em gradiente (sem foto real de
-         projeto comercial). Troque o "ph-fill" por uma <img> quando tiver.
-         Cada foto tem um botão de lupa que abre o lightbox (ver script.js). -->
+    <!-- 11 fotos reais de projetos. Cada foto tem um botão de lupa que abre
+         o lightbox (ver script.js). -->
     <section class="section" id="galeria">
       <div class="container">
         <p class="eyebrow" data-reveal>Sessão de fotos</p>
@@ -382,7 +423,10 @@
 
         <div class="gallery-grid" data-reveal="stagger">
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto2.jpg" data-caption="Residencial — Sala · parede decorativa">
-            <img src="assets/gallery/foto2.jpg" alt="Sala de estar com parede decorativa marmorizada pintada pela Prime Pintura" loading="lazy" width="900" height="900" />
+            <picture>
+              <source srcset="assets/gallery/foto2.webp" type="image/webp" />
+              <img src="assets/gallery/foto2.jpg" alt="Sala de estar com parede decorativa marmorizada pintada pela Prime Pintura" loading="lazy" width="900" height="900" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -390,7 +434,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto1.jpg" data-caption="Residencial — Quarto · acabamento fosco">
-            <img src="assets/gallery/foto1.jpg" alt="Quarto recém pintado em tom neutro, acabamento fosco" loading="lazy" width="900" height="900" />
+            <picture>
+              <source srcset="assets/gallery/foto1.webp" type="image/webp" />
+              <img src="assets/gallery/foto1.jpg" alt="Quarto recém pintado em tom neutro, acabamento fosco" loading="lazy" width="900" height="900" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -398,7 +445,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto3.jpg" data-caption="Residencial — Sala · integração com varanda">
-            <img src="assets/gallery/foto3.jpg" alt="Sala de estar integrada com varanda, piso de madeira e parede decorativa" loading="lazy" width="900" height="900" />
+            <picture>
+              <source srcset="assets/gallery/foto3.webp" type="image/webp" />
+              <img src="assets/gallery/foto3.jpg" alt="Sala de estar integrada com varanda, piso de madeira e parede decorativa" loading="lazy" width="900" height="900" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -406,7 +456,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto5.jpg" data-caption="Residencial — Sanca · iluminação embutida">
-            <img src="assets/gallery/foto5.jpg" alt="Sanca de gesso com iluminação embutida em apartamento" loading="lazy" width="900" height="900" />
+            <picture>
+              <source srcset="assets/gallery/foto5.webp" type="image/webp" />
+              <img src="assets/gallery/foto5.jpg" alt="Sanca de gesso com iluminação embutida em apartamento" loading="lazy" width="900" height="900" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow"> Residencial</span>
@@ -414,7 +467,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item span-2" data-lightbox="assets/gallery/foto4.jpg" data-caption="Residencial — Fachada · sobrado completo">
-            <img src="assets/gallery/foto4.jpg" alt="Fachada de sobrado em fase final de acabamento" loading="lazy" width="900" height="900" />
+            <picture>
+              <source srcset="assets/gallery/foto4.webp" type="image/webp" />
+              <img src="assets/gallery/foto4.jpg" alt="Fachada de sobrado em fase final de acabamento" loading="lazy" width="900" height="900" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -423,23 +479,32 @@
           </button>
           
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto6.jpg" data-caption="Comercial — Fachada · prédio comercial">
-            <img src="assets/gallery/foto6.jpg" alt="Fachada de prédio comercial pintada pela Prime Pintura" loading="lazy" width="756" height="1600" />
+            <picture>
+              <source srcset="assets/gallery/foto6.webp" type="image/webp" />
+              <img src="assets/gallery/foto6.jpg" alt="Fachada de prédio comercial pintada pela Prime Pintura" loading="lazy" width="756" height="1600" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Comercial</span>
               <strong>Prédio comercial</strong>
             </span>
           </button>
-          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto7.jpg" data-caption="Residencial — Fachada · acabamento em pedra">
-            <img src="assets/gallery/foto7.jpg" alt="Fachada residencial em tom bege com detalhes em pedra e portão de ferro pintados pela Prime Pintura" loading="lazy" width="720" height="1282" />
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto7.jpg" data-caption="Residencial — condomínio · com acabamento">
+            <picture>
+              <source srcset="assets/gallery/foto7.webp" type="image/webp" />
+              <img src="assets/gallery/foto7.jpg" alt="Fachada residencial em tom bege com detalhes em pedra e portão de ferro pintados pela Prime Pintura" loading="lazy" width="720" height="1282" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
-              <strong>condomínio · com acabamento </strong>
+              <strong>condomínio · com acabamento</strong>
             </span>
           </button>
-          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto9.jpg" data-caption="Residencial — Quarto · revestimento e iluminação">
-            <img src="assets/gallery/foto9.jpg" alt="Quarto com parede em revestimento cinza e iluminação embutida no teto, obra da Prime Pintura" loading="lazy" width="756" height="1600" />
+          <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto9.jpg" data-caption="Residencial — Quarto · Cada detalhe feito com carinho">
+            <picture>
+              <source srcset="assets/gallery/foto9.webp" type="image/webp" />
+              <img src="assets/gallery/foto9.jpg" alt="Quarto com parede em revestimento cinza e iluminação embutida no teto, obra da Prime Pintura" loading="lazy" width="756" height="1600" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -447,7 +512,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item span-2" data-lightbox="assets/gallery/foto10.jpg" data-caption="Residencial — Fachada · pintura em execução">
-            <img src="assets/gallery/foto10.jpg" alt="Pintor da Prime Pintura aplicando tinta em portão de fachada residencial verde" loading="lazy" width="720" height="1282" />
+            <picture>
+              <source srcset="assets/gallery/foto10.webp" type="image/webp" />
+              <img src="assets/gallery/foto10.jpg" alt="Pintor da Prime Pintura aplicando tinta em portão de fachada residencial verde" loading="lazy" width="720" height="1282" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>
@@ -455,7 +523,10 @@
             </span>
           </button>
           <button type="button" class="gallery-item" data-lightbox="assets/gallery/foto11.jpg" data-caption="Residencial — Fachada · sobrado geminado">
-            <img src="assets/gallery/foto11.jpg" alt="Fachada de sobrado geminado em tom cinza claro pintada pela Prime Pintura" loading="lazy" width="721" height="1600" />
+            <picture>
+              <source srcset="assets/gallery/foto11.webp" type="image/webp" />
+              <img src="assets/gallery/foto11.jpg" alt="Fachada de sobrado geminado em tom cinza claro pintada pela Prime Pintura" loading="lazy" width="721" height="1600" />
+            </picture>
             <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></span>
             <span class="gallery-caption">
               <span class="eyebrow">Residencial</span>

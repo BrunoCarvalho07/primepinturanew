@@ -2,10 +2,12 @@
  * PRIME PINTURA — script.js
  * Vanilla JS, sem dependências externas (mantém o site leve e rápido em 3G/4G).
  *
- * Módulos:
- *  0. Tema: alterna claro/escuro e lembra a preferência do visitante
+ * Tema claro/escuro e menu mobile agora são controlados pelo Alpine.js
+ * (ver <script> no <head> do index.html, componente ppApp()) — são só
+ * toggles de estado simples, mais legíveis como diretivas no HTML.
+ *
+ * Módulos deste arquivo:
  *  1. Header: muda de transparente para sólido ao rolar
- *  2. Menu mobile: abre/fecha o overlay de navegação
  *  3. Hero scroll-scrubbing: desenha o frame correto do vídeo de tinta laranja
  *     num <canvas> conforme a posição do scroll dentro da seção Hero,
  *     e ativa os textos narrativos (hero-story) por faixa de progresso
@@ -23,15 +25,14 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   initPreloader();
-  initTheme();
   initHeader();
-  initMobileMenu();
   initHeroScrubbing();
   initScrollRoller();
   initVideoParallax();
   initReviewsDrag();
   initRevealOnScroll();
   initLightbox();
+  initWhatsAppTracking();
   setYear();
 });
 
@@ -66,25 +67,22 @@ function initPreloader() {
 
 
 
-/* ---------- 0. TEMA CLARO/ESCURO ---------- */
+/* ---------- 0.1 RASTREAMENTO DE CLIQUE NO WHATSAPP (GA4) ---------- */
 /**
- * Preferência salva em localStorage (site real, fora do sandbox de
- * artifacts — localStorage funciona normalmente aqui). Se não houver nada
- * salvo, respeita o tema do sistema operacional do visitante.
+ * Dispara um evento "whatsapp_click" no Analytics sempre que alguém clica
+ * em qualquer botão/link do WhatsApp do site (hero, CTA final, rodapé,
+ * botão flutuante). Assim dá pra ver no GA4 quantos visitantes realmente
+ * entraram em contato, não só quantos visitaram a página.
  */
-function initTheme() {
-  const root = document.documentElement;
-  const stored = localStorage.getItem("pp-theme");
-  const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-  const initial = stored || (prefersLight ? "light" : "dark");
-  root.setAttribute("data-theme", initial);
-
-  document.querySelectorAll(".theme-toggle").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const current = root.getAttribute("data-theme");
-      const next = current === "light" ? "dark" : "light";
-      root.setAttribute("data-theme", next);
-      localStorage.setItem("pp-theme", next);
+function initWhatsAppTracking() {
+  document.querySelectorAll('a[href*="wa.me"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      if (typeof gtag === "function") {
+        gtag("event", "whatsapp_click", {
+          event_category: "contato",
+          event_label: link.className || link.closest("section")?.id || "whatsapp",
+        });
+      }
     });
   });
 }
@@ -99,35 +97,6 @@ function initHeader() {
   };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
-}
-
-/* ---------- 2. MENU MOBILE ---------- */
-function initMobileMenu() {
-  const toggle = document.querySelector(".nav-toggle");
-  const menu = document.querySelector(".mobile-menu");
-  const closeBtn = document.querySelector(".mobile-menu-close");
-  if (!toggle || !menu) return;
-
-  const closeMenu = () => {
-    menu.classList.remove("is-open");
-    document.body.classList.remove("menu-open");
-    toggle.setAttribute("aria-expanded", "false");
-  };
-
-  toggle.addEventListener("click", () => {
-    const isOpen = menu.classList.toggle("is-open");
-    document.body.classList.toggle("menu-open", isOpen);
-    toggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  closeBtn?.addEventListener("click", closeMenu);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && menu.classList.contains("is-open")) closeMenu();
-  });
-
-  // Links de navegação fecham o menu ao clicar (mas não o botão de tema,
-  // que também pode estar dentro do overlay e não deve fechar nada)
-  menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 }
 
 /* ---------- 3. HERO SCROLL-SCRUBBING ---------- */
@@ -146,14 +115,19 @@ function initHeroScrubbing() {
   const ctx = canvas.getContext("2d");
   const FRAME_COUNT = 80; // quantidade de frames extraídos do vídeo (mais frames = scrubbing mais suave)
   const framePath = (i) =>
-    `assets/frames-hero/frame_${String(i + 1).padStart(3, "0")}.jpg`;
+    `assets/frames-hero/frame_${String(i + 1).padStart(3, "0")}.webp`;
 
   const images = new Array(FRAME_COUNT);
   let loadedCount = 0;
   let ready = false;
 
   function preload() {
-    for (let i = 0; i < FRAME_COUNT; i++) {
+    // Carrega os primeiros frames (cobrem o começo do scroll) imediatamente,
+    // e o resto em segundo plano — evita baixar os 80 frames de uma vez só
+    // na primeira visita, o que pesava no carregamento inicial da página.
+    const PRIORITY_COUNT = 12;
+
+    function loadFrame(i) {
       const img = new Image();
       img.src = framePath(i);
       img.onload = () => {
@@ -163,6 +137,19 @@ function initHeroScrubbing() {
       };
       images[i] = img;
     }
+
+    const schedule =
+      window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+
+    for (let i = 0; i < Math.min(PRIORITY_COUNT, FRAME_COUNT); i++) loadFrame(i);
+
+    let next = PRIORITY_COUNT;
+    function loadNextBatch() {
+      const end = Math.min(next + 6, FRAME_COUNT);
+      for (; next < end; next++) loadFrame(next);
+      if (next < FRAME_COUNT) schedule(loadNextBatch, { timeout: 500 });
+    }
+    if (next < FRAME_COUNT) schedule(loadNextBatch, { timeout: 500 });
   }
 
   function resizeCanvas() {
